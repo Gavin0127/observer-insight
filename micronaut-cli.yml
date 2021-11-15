@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: com.insight.io
+testFramework: junit
+sourceLanguage: java
+buildTool: gradle
+features: [ annotation-api, app-name, cache-caffeine, github-workflow-docker-registry, graalvm, gradle, http-client, java, java-application, junit, logback, lombok, micronaut-build, mongo-sync, netty-server, openapi, readme, rxjava3, rxjava3-http-client, shade, testcontainers, yaml ]
