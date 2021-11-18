@@ -18,5 +18,4 @@ public class ClientDetailss {
     private String browserVersion;
 
 
-    public record Persion(String name, Integer age) {}
 }

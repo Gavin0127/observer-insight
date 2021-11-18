@@ -14,5 +14,8 @@ public class Tracks {
     private String mediaSourceID;
     private Long timestamp;
     private String mediaType;
+    private Integer frameWidth;
+    private Integer frameHeight;
+    private Double jitterBufferDelay;
 
 }

@@ -1,6 +1,6 @@
 package com.insight.io.insight.controllers;
 
-import com.insight.io.insight.dto.CallDto;
+import com.insight.io.insight.dto.MeetingDto;
 import com.insight.io.insight.services.InsightService;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -32,9 +32,9 @@ public class InsightController {
         return "Hello World";
     }
 
-    @Get("/calls/{callId}")
-    public List<CallDto> getCalls(String callId) {
-        return insightService.getCalls(callId);
+    @Get("/meetings/{mid}")
+    public List<MeetingDto> getMeetings(String mid) {
+        return insightService.getMeetings(mid);
     }
 
 }

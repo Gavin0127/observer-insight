@@ -1,11 +1,10 @@
 package com.insight.io.insight.services;
 
-import com.insight.io.insight.dto.CallDto;
+import com.insight.io.insight.dto.MeetingDto;
 import com.insight.io.insight.repositories.InsightRepository;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +23,7 @@ public class InsightServiceImpl implements InsightService {
 
 
     @Override
-    public List<CallDto> getCalls(String callId) {
-        return insightRepository.getCalls(callId);
+    public List<MeetingDto> getMeetings(String callId) {
+        return insightRepository.getMeetings(callId);
     }
 }

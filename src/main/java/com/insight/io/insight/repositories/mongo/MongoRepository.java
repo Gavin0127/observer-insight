@@ -1,14 +1,12 @@
 package com.insight.io.insight.repositories.mongo;
 
-import com.insight.io.insight.dto.CallDto;
+import com.insight.io.insight.dto.MeetingDto;
 import com.insight.io.insight.entities.mongo.InitiatedCalls;
 import com.insight.io.insight.repositories.InsightRepository;
-import com.mongodb.client.ListCollectionsIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +28,8 @@ public class MongoRepository implements InsightRepository {
     }
 
     @Override
-    public List<CallDto> getCalls(String callId) {
-        log.info("get calls: " + callId);
+    public List<MeetingDto> getMeetings(String mid) {
+        log.info("get calls: " + mid);
         MongoDatabase reports = mongoClient.getDatabase(database);
         String simpleName = InitiatedCalls.class.getSimpleName();
         System.out.println(simpleName);

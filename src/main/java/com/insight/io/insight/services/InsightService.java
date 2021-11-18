@@ -1,6 +1,6 @@
 package com.insight.io.insight.services;
 
-import com.insight.io.insight.dto.CallDto;
+import com.insight.io.insight.dto.MeetingDto;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface InsightService {
 
-    List<CallDto> getCalls(String callId);
+    List<MeetingDto> getMeetings(String callId);
 
 
 }
