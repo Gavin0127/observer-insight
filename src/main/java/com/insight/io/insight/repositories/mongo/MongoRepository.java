@@ -1,9 +1,11 @@
 package com.insight.io.insight.repositories.mongo;
 
 import com.insight.io.insight.dto.CallDto;
+import com.insight.io.insight.entities.mongo.InitiatedCalls;
 import com.insight.io.insight.repositories.InsightRepository;
 import com.mongodb.client.ListCollectionsIterable;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
@@ -31,8 +33,15 @@ public class MongoRepository implements InsightRepository {
     public List<CallDto> getCalls(String callId) {
         log.info("get calls: " + callId);
         MongoDatabase reports = mongoClient.getDatabase(database);
-        ListCollectionsIterable<Document> documents = reports.listCollections();
-        documents.forEach(doc -> System.out.println(doc.toJson()));
+        String simpleName = InitiatedCalls.class.getSimpleName();
+        System.out.println(simpleName);
+        MongoCollection<InitiatedCalls> doc =
+                reports.getCollection(simpleName,
+                        InitiatedCalls.class);
+        System.out.println(doc.countDocuments());
+        doc.find().forEach(e -> {
+            System.out.println(e);
+        });
         return new ArrayList<>();
     }
 

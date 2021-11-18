@@ -13,14 +13,13 @@ import java.util.List;
  */
 @Singleton
 @Slf4j
-public class InsightRepositoryImpl implements InsightRepository {
+public class InsightRepoDelegation implements InsightRepository {
 
     private InsightRepository repoDelegation;
 
-    public InsightRepositoryImpl(RepositoryRegistry repositoryRegistry,
+    public InsightRepoDelegation(RepositoryProvider repositoryProvider,
             SourceConfig sourceConfig) {
-        this.repoDelegation = repositoryRegistry.getRepository(
-                sourceConfig);
+        this.repoDelegation = repositoryProvider.getRepository(sourceConfig);
     }
 
     @Override

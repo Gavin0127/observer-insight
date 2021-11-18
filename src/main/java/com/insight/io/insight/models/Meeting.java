@@ -7,9 +7,9 @@ import lombok.Data;
  * @since 0.1
  */
 @Data
-public class Call {
+public class Meeting {
 
-    private String callId;
+    private String mid;
     private String roomName;
     private Long startTs;
     private Long endTs;

@@ -1,13 +1,14 @@
 package com.insight.io.insight.repositories;
 
 import com.insight.io.insight.configs.SourceConfig;
-import com.insight.io.insight.repositories.mongo.MongoRepository;
+import com.insight.io.insight.repositories.mongo.MongoRepoBuilder;
 import com.mongodb.client.MongoClient;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.insight.io.insight.repositories.RepoType.MONGO;
 import static com.insight.io.insight.repositories.RepoType.valueOf;
@@ -17,10 +18,11 @@ import static com.insight.io.insight.repositories.RepoType.valueOf;
  * @since 0.1
  */
 @Singleton
-public class RepositoryRegistry {
+@Slf4j
+public class RepositoryProvider {
 
     private static final Map<RepoType, InsightRepository> repoRegistries =
-            new HashMap<>();
+            new ConcurrentHashMap<>();
 
     @Inject
     MongoClient mongoClient;
@@ -30,8 +32,12 @@ public class RepositoryRegistry {
         return repoRegistries.get(valueOf(config.getType().toUpperCase()));
     }
 
-    public void initRepo(SourceConfig config) {
-        switch (RepoType.valueOf(config.getType().toUpperCase())) {
+    private void initRepo(SourceConfig config) {
+        RepoType repoType = valueOf(config.getType().toUpperCase());
+        if (repoRegistries.containsKey(repoType)) {
+            return;
+        }
+        switch (repoType) {
             case MONGO:
                 initMongoRepo(config);
             case REDSHIFT:
@@ -40,9 +46,8 @@ public class RepositoryRegistry {
     }
 
     private void initMongoRepo(SourceConfig config) {
-//        MongoClient mongoClient = MongoClients.create();
-        repoRegistries.put(MONGO, new MongoRepository(mongoClient).withDatabase(
-                config.getDatabase()));
+        repoRegistries.putIfAbsent(MONGO,
+                new MongoRepoBuilder(mongoClient).withConfig(config).build());
     }
 
 }
