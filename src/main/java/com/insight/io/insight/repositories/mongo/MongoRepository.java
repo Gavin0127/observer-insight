@@ -32,7 +32,6 @@ public class MongoRepository implements InsightRepository {
         log.info("get calls: " + mid);
         MongoDatabase reports = mongoClient.getDatabase(database);
         String simpleName = InitiatedCalls.class.getSimpleName();
-        System.out.println(simpleName);
         MongoCollection<InitiatedCalls> doc =
                 reports.getCollection(simpleName,
                         InitiatedCalls.class);
