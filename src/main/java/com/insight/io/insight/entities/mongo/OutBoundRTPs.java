@@ -21,5 +21,6 @@ public class OutBoundRTPs {
     private Integer qpSum;
     private Integer firCount;
     private Integer pliCount;
+    private Integer retransmittedBytesSent;
 
 }

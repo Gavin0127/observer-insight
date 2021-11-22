@@ -16,6 +16,7 @@ public class Tracks {
     private String mediaType;
     private Integer frameWidth;
     private Integer frameHeight;
+    private Integer hugeFramesSent;
     private Double jitterBufferDelay;
 
 }

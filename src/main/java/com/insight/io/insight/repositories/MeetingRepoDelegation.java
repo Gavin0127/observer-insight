@@ -13,17 +13,22 @@ import java.util.List;
  */
 @Singleton
 @Slf4j
-public class InsightRepoDelegation implements InsightRepository {
+public class MeetingRepoDelegation implements MeetingRepository {
 
-    private InsightRepository repoDelegation;
+    private MeetingRepository repoDelegation;
 
-    public InsightRepoDelegation(RepositoryProvider repositoryProvider,
+    public MeetingRepoDelegation(RepositoryProvider repositoryProvider,
             SourceConfig sourceConfig) {
         this.repoDelegation = repositoryProvider.getRepository(sourceConfig);
     }
 
     @Override
-    public List<MeetingDto> getMeetings(String mid) {
-        return repoDelegation.getMeetings(mid);
+    public List<MeetingDto> getMeetings() {
+        return repoDelegation.getMeetings();
+    }
+
+    @Override
+    public MeetingDto getMeeting(String mid) {
+        return repoDelegation.getMeeting(mid);
     }
 }

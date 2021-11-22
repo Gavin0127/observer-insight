@@ -13,6 +13,7 @@ public class InboundRTPs {
     private String peerConnectionUUID;
     private String trackId;
     private String transportId;
+    private Integer bytesReceived;
     private String mediaType;
     private Long timestamp;
     private Integer qpSum;

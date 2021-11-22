@@ -42,18 +42,25 @@ dependencies {
 
 }
 
+compileJava {
+    options.fork = true
+    options.forkOptions.jvmArgs << '-Dmicronaut.openapi.views.spec=rapidoc.enabled=true,swagger-ui.enabled=true,swagger-ui.theme=flattop'
+}
 
 application {
     mainClass.set("com.insight.io.Application")
 }
+
 java {
     sourceCompatibility = JavaVersion.toVersion("17")
     targetCompatibility = JavaVersion.toVersion("17")
 }
+
 dockerfile {
     baseImage = "openjdk:17.0.1-jdk-slim"
     args("-Xmx512m")
 }
+
 dockerBuild {
     images = ["gavin0127/${project.name}:$project.version"]
 }

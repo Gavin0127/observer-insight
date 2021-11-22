@@ -21,13 +21,13 @@ import static com.insight.io.insight.repositories.RepoType.valueOf;
 @Slf4j
 public class RepositoryProvider {
 
-    private static final Map<RepoType, InsightRepository> repoRegistries =
+    private static final Map<RepoType, MeetingRepository> repoRegistries =
             new ConcurrentHashMap<>();
 
     @Inject
     MongoClient mongoClient;
 
-    public InsightRepository getRepository(SourceConfig config) {
+    public MeetingRepository getRepository(SourceConfig config) {
         initRepo(config);
         return repoRegistries.get(valueOf(config.getType().toUpperCase()));
     }

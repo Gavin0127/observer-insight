@@ -5,13 +5,14 @@ import com.insight.io.insight.dto.MeetingDto;
 import java.util.List;
 
 /**
- *
  * @author Xiantao Ge
  * @since 0.1
  */
-public interface InsightService {
+public interface MeetingService {
 
-    List<MeetingDto> getMeetings(String callId);
+    MeetingDto getMeeting(String callId);
+
+    List<MeetingDto> getMeetings();
 
 
 }

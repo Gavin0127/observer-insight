@@ -9,8 +9,10 @@ import java.util.List;
  * @author Xiantao Ge
  * @since 0.1
  */
-public interface InsightRepository {
+public interface MeetingRepository {
 
-    List<MeetingDto> getMeetings(String mid);
+    List<MeetingDto> getMeetings();
+
+    MeetingDto getMeeting(String mid);
 
 }
