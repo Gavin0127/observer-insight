@@ -24,7 +24,7 @@ public class MeetingController {
     private MeetingService meetingService;
 
     @Get
-    public List<MeetingDto> getMeeting() {
+    public List<MeetingDto> getMeetings() {
         return meetingService.getMeetings();
     }
 
