@@ -12,7 +12,7 @@ public interface MeetingService {
 
     MeetingDto getMeeting(String callId);
 
-    List<MeetingDto> getMeetings();
+    List<MeetingDto> getMeetings(String roomName, String uid);
 
 
 }

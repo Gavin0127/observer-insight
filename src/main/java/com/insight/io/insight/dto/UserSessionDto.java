@@ -1,6 +1,7 @@
 package com.insight.io.insight.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  */
 @Data
 @Schema(description = "a webRTC meeting")
+@Builder
 public class UserSessionDto {
 
     @Schema(description = "the user session id")
@@ -27,9 +29,9 @@ public class UserSessionDto {
     private Integer platformType;
     @Schema(description = "the user platform ver")
     private String platformVer;
-    @Schema(description = "the meeting start timestamp")
+    @Schema(description = "the user session start timestamp")
     private Long startTs;
-    @Schema(description = "the meeting end timestamp")
+    @Schema(description = "the user session end timestamp")
     private Long endTs;
     @Schema(description = "the inbound RTP samples")
     private List<InboundRTPDto> inboundRTPs;

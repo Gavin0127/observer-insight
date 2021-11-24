@@ -1,6 +1,7 @@
 package com.insight.io.insight.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -8,11 +9,14 @@ import lombok.Data;
  * @since 0.1
  */
 @Data
+@Builder
 @Schema(description = "the user media track info")
 public class InboundRTPDto {
 
     @Schema(description = "the ssrc")
     private Integer ssrc;
+    @Schema(description = "the timestamp")
+    private Long timestamp;
     @Schema(description = "the frame decoded")
     private Integer frameDecoded;
     @Schema(description = "the key frame decoded")
@@ -25,7 +29,7 @@ public class InboundRTPDto {
     private Integer frameReceived;
     @Schema(description = "the frame per second")
     private Integer framePerSecond;
-    @Schema(description = "the sum of queries per second")
+    @Schema(description = "the qp sum")
     private Integer qpSum;
     @Schema(description = "the bytes received")
     private Integer bytesReceived;

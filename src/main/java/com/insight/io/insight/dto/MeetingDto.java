@@ -1,6 +1,7 @@
 package com.insight.io.insight.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
  * @since 0.1
  */
 @Data
+@Builder
 @Schema(description = "the webRTC meeting")
 public class MeetingDto {
 

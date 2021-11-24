@@ -2,8 +2,10 @@ package com.insight.io.insight.controllers;
 
 import com.insight.io.insight.dto.MeetingDto;
 import com.insight.io.insight.services.MeetingService;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.QueryValue;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
@@ -24,8 +26,9 @@ public class MeetingController {
     private MeetingService meetingService;
 
     @Get
-    public List<MeetingDto> getMeetings() {
-        return meetingService.getMeetings();
+    public List<MeetingDto> getMeetings(@QueryValue @Nullable String roomName,
+            @QueryValue @Nullable String uid) {
+        return meetingService.getMeetings(roomName, uid);
     }
 
     @Get("/{mid}")

@@ -24,7 +24,9 @@ public class UserController {
     @Get("/{sid}")
     public UserSessionDto getUserSession(
             @Parameter(description = "the user session id") String sid) {
-        return userSessionService.getUserSession(sid);
+        UserSessionDto userSession = userSessionService.getUserSession(sid);
+        log.info(userSession.toString());
+        return userSession;
     }
 
 }
