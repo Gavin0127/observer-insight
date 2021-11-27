@@ -11,6 +11,8 @@ public class JoinedPeerConnections {
 
     private String peerConnectionUUID;
     private String callUUID;
+    private String userId;
+    private String callName;
     private Long timestamp;
 
 }

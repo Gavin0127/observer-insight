@@ -10,12 +10,15 @@ import lombok.Data;
 public class ClientDetailss {
 
     private String peerConnectionUUID;
-    private String platformVendor;
-    private String platformType;
+    private String roomName;
+    private String userId;
     private String osName;
     private String osVersion;
     private String browserName;
     private String browserVersion;
+    private String engineName;
+    private String engineVersion;
+    private String platformVendor;
 
 
 }

@@ -6,6 +6,7 @@ import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Xiantao Ge
@@ -30,12 +31,14 @@ public class MeetingServiceImpl implements MeetingService {
 
     @Override
     public List<MeetingDto> getMeetings(String roomName, String uid) {
-        return List.of(mockMeeting("meetingUUID_1123"));
+        return meetingRepository.getMeetings(roomName, uid).stream()
+                .map(MeetingDto::of).collect(Collectors.toList());
+        //        return List.of(mockMeeting("meetingUUID_1123"));
     }
 
     @Override
     public MeetingDto getMeeting(String mid) {
-        return mockMeeting(mid);
-        //        return meetingRepository.getMeeting(mid);
+        return MeetingDto.of(meetingRepository.getMeeting(mid));
+        //        return mockMeeting(mid);
     }
 }

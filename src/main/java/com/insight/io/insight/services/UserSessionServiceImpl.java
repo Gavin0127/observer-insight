@@ -18,7 +18,7 @@ import java.util.List;
 public class UserSessionServiceImpl implements UserSessionService {
 
     public static UserSessionDto mockUserSession() {
-        return UserSessionDto.builder().roomName("avc_data_hub").userId("Hef")
+        return UserSessionDto.builder().roomName("avc_data_hub").uid("Hef")
                 .platformVendor("apple").osName("macOS").osVersion("10.15.7")
                 .browserName("Chrome").browserVersion("96.0.4664.45")
                 .engineName("Blink").startTs(1637771722L).endTs(1637775322L)
@@ -34,8 +34,8 @@ public class UserSessionServiceImpl implements UserSessionService {
 
     public static InboundTrackDto mockInboundTrack(String trackId, Integer ssrc,
             String userId, Integer mediaType) {
-        return InboundTrackDto.builder().trackId(trackId).ssrc(ssrc)
-                .userId(userId).mediaType(mediaType).inboundSamples(
+        return InboundTrackDto.builder().trackId(trackId).ssrc(ssrc).uid(userId)
+                .mediaType(mediaType).inboundSamples(
                         List.of(mockInboundSample(1637775322L, 10),
                                 mockInboundSample(1637775333L, 100))).build();
     }
@@ -53,8 +53,8 @@ public class UserSessionServiceImpl implements UserSessionService {
         return InboundTrackDto.InboundSampleDto.builder().audioLevel(v)
                 .bytesReceived(v).frameReceived(v).frameDecoded(v)
                 .keyFrameDecoded(v).frameHeight(v).frameWidth(v).firCount(v)
-                .jitterBufferDelay(v).qpSum(v).timestamp(timestamp)
-                .framePerSecond(v).totalAudioEnergy(v).build();
+                .jitterBufferDelay(v).qpSum(v).ts(timestamp).framePerSecond(v)
+                .totalAudioEnergy(v).build();
     }
 
     private static OutboundTrackDto.OutboundSampleDto mockOutboundSample(
@@ -62,12 +62,12 @@ public class UserSessionServiceImpl implements UserSessionService {
         return OutboundTrackDto.OutboundSampleDto.builder()
                 .totalEncodedBytesTarget(v).bytesSent(v).frameEncoded(v)
                 .keyFrameEncoded(v).frameHeight(v).frameWidth(v).firCount(v)
-                .retransmittedBytesSent(v).qpSum(v).timestamp(timestamp)
+                .retransmittedBytesSent(v).qpSum(v).ts(timestamp)
                 .framePerSecond(v).build();
     }
 
     private static EventDto mockEvent(Integer uri, Long ts) {
-        return EventDto.builder().timestamp(ts).uri(uri)
+        return EventDto.builder().ts(ts).uri(uri)
                 .content(uri + " : details: ts: " + ts).build();
     }
 

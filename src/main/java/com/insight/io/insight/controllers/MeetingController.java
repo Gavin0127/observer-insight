@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Xiantao Ge
@@ -28,6 +29,9 @@ public class MeetingController {
     @Get
     public List<MeetingDto> getMeetings(@QueryValue @Nullable String roomName,
             @QueryValue @Nullable String uid) {
+        if (Objects.isNull(roomName) && Objects.isNull(uid)) {
+            return null;
+        }
         return meetingService.getMeetings(roomName, uid);
     }
 

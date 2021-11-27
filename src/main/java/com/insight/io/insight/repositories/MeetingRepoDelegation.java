@@ -1,7 +1,7 @@
 package com.insight.io.insight.repositories;
 
 import com.insight.io.insight.configs.SourceConfig;
-import com.insight.io.insight.dto.MeetingDto;
+import com.insight.io.insight.models.Meeting;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,16 +19,16 @@ public class MeetingRepoDelegation implements MeetingRepository {
 
     public MeetingRepoDelegation(RepositoryProvider repositoryProvider,
             SourceConfig sourceConfig) {
-        this.repoDelegation = repositoryProvider.getRepository(sourceConfig);
+        this.repoDelegation = repositoryProvider.getMeetingRepo(sourceConfig);
     }
 
     @Override
-    public List<MeetingDto> getMeetings() {
-        return repoDelegation.getMeetings();
+    public List<Meeting> getMeetings(String roomName, String uid) {
+        return repoDelegation.getMeetings(roomName, uid);
     }
 
     @Override
-    public MeetingDto getMeeting(String mid) {
+    public Meeting getMeeting(String mid) {
         return repoDelegation.getMeeting(mid);
     }
 }

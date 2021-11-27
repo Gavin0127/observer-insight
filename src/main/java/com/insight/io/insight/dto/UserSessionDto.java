@@ -15,12 +15,12 @@ import java.util.List;
 @Builder
 public class UserSessionDto {
 
-    @Schema(description = "the peerConnection UUID")
-    private String peerConnectionUUID;
+    @Schema(description = "the session id")
+    private String sid;
     @Schema(description = "the meeting room name")
     private String roomName;
     @Schema(description = "the user id")
-    private String userId;
+    private String uid;
     @Schema(description = "the user os name")
     private String osName;
     @Schema(description = "the user os version")

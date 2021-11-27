@@ -8,8 +8,9 @@ import lombok.Data;
  */
 @Data
 public class InitiatedCalls {
+
     private String callUUID;
     private String callName;
-    private String type;
     private Long timestamp;
+
 }

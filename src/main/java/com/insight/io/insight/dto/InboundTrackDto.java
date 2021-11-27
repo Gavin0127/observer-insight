@@ -20,7 +20,7 @@ public class InboundTrackDto {
     @Schema(description = "the ssrc")
     private Integer ssrc;
     @Schema(description = "the remote userId")
-    private String userId;
+    private String uid;
     @Schema(description = "the mediaType: 0 - audio, 1 - video, 2 - screen " +
             "sharing")
     private Integer mediaType;
@@ -34,7 +34,7 @@ public class InboundTrackDto {
     public static class InboundSampleDto {
 
         @Schema(description = "the timestamp")
-        private Long timestamp;
+        private Long ts;
         @Schema(description = "the frame decoded")
         private Integer frameDecoded;
         @Schema(description = "the key frame decoded")

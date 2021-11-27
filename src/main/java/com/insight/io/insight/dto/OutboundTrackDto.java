@@ -33,7 +33,7 @@ public class OutboundTrackDto {
     public static class OutboundSampleDto {
 
         @Schema(description = "the timestamp")
-        private Long timestamp;
+        private Long ts;
         @Schema(description = "the frame encoded")
         private Integer frameEncoded;
         @Schema(description = "the key frame encoded")

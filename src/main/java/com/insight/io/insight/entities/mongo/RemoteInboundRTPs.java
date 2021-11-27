@@ -12,6 +12,7 @@ public class RemoteInboundRTPs {
     private String ssrc;
     private String peerConnectionUUID;
     private String userId;
+    private String callName;
     private String trackId;
     private String transportId;
     private String localID;
