@@ -5,9 +5,7 @@ import com.insight.io.insight.repositories.MeetingRepository;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author Xiantao Ge
@@ -23,20 +21,21 @@ public class MeetingServiceImpl implements MeetingService {
         this.meetingRepository = meetingRepository;
     }
 
+    public static MeetingDto mockMeeting(String mid) {
+        return MeetingDto.builder().mid(mid).roomName("Olympia")
+                .startTs(1637771722L).endTs(1637775322L)
+                .userSessions(List.of(UserSessionServiceImpl.mockUserSession()))
+                .build();
+    }
+
     @Override
     public List<MeetingDto> getMeetings(String roomName, String uid) {
-        return List.of(mockMeeting());
+        return List.of(mockMeeting("meetingUUID_1123"));
     }
 
     @Override
     public MeetingDto getMeeting(String mid) {
-        return mockMeeting();
-//        return meetingRepository.getMeeting(mid);
-    }
-
-    private MeetingDto mockMeeting() {
-        return MeetingDto.builder().mid(UUID.randomUUID().toString())
-                .roomName("Olympia").startTs(1637771722L).endTs(1637775322L)
-                .build();
+        return mockMeeting(mid);
+        //        return meetingRepository.getMeeting(mid);
     }
 }

@@ -17,7 +17,7 @@ public class EventDto {
     private Integer uri;
     @Schema(description = "the timestamp")
     private Long timestamp;
-    @Schema(description = "the event details")
-    private String details;
+    @Schema(description = "the event content")
+    private String content;
 
 }

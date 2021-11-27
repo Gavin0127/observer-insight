@@ -15,28 +15,34 @@ import java.util.List;
 @Builder
 public class UserSessionDto {
 
-    @Schema(description = "the user session id")
-    private String sid;
-    @Schema(description = "the meeting id")
-    private String mid;
+    @Schema(description = "the peerConnection UUID")
+    private String peerConnectionUUID;
+    @Schema(description = "the meeting room name")
+    private String roomName;
     @Schema(description = "the user id")
-    private String uid;
-    @Schema(description = "the user os type")
-    private Integer osType;
+    private String userId;
     @Schema(description = "the user os name")
     private String osName;
-    @Schema(description = "the user platform type")
-    private Integer platformType;
-    @Schema(description = "the user platform ver")
-    private String platformVer;
+    @Schema(description = "the user os version")
+    private String osVersion;
+    @Schema(description = "the user browser name")
+    private String browserName;
+    @Schema(description = "the user browser version")
+    private String browserVersion;
+    @Schema(description = "the user browser engine name")
+    private String engineName;
+    @Schema(description = "the user browser engine version")
+    private String engineVersion;
+    @Schema(description = "the user platform vendor")
+    private String platformVendor;
     @Schema(description = "the user session start timestamp")
     private Long startTs;
     @Schema(description = "the user session end timestamp")
     private Long endTs;
-    @Schema(description = "the inbound RTP samples")
-    private List<InboundRTPDto> inboundRTPs;
-    @Schema(description = "the outbound RTP samples")
-    private List<OutboundRTPDto> outboundRTPs;
+    @Schema(description = "the user inbound tracks")
+    private List<InboundTrackDto> inboundTracks;
+    @Schema(description = "the user outbound tracks")
+    private List<OutboundTrackDto> outboundTracks;
     @Schema(description = "the user events")
     private List<EventDto> events;
 
