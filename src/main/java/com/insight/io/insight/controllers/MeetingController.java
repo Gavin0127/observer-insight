@@ -1,6 +1,6 @@
 package com.insight.io.insight.controllers;
 
-import com.insight.io.insight.dto.MeetingDto;
+import com.insight.io.insight.models.Meeting;
 import com.insight.io.insight.services.MeetingService;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.annotation.Controller;
@@ -27,7 +27,7 @@ public class MeetingController {
     private MeetingService meetingService;
 
     @Get
-    public List<MeetingDto> getMeetings(@QueryValue @Nullable String roomName,
+    public List<Meeting> getMeetings(@QueryValue @Nullable String roomName,
             @QueryValue @Nullable String uid) {
         if (Objects.isNull(roomName) && Objects.isNull(uid)) {
             return null;
@@ -36,7 +36,7 @@ public class MeetingController {
     }
 
     @Get("/{mid}")
-    public MeetingDto getMeeting(
+    public Meeting getMeeting(
             @Parameter(description = "the meeting id") String mid) {
         return meetingService.getMeeting(mid);
     }

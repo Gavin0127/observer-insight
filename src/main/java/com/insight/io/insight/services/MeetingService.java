@@ -1,6 +1,6 @@
 package com.insight.io.insight.services;
 
-import com.insight.io.insight.dto.MeetingDto;
+import com.insight.io.insight.models.Meeting;
 
 import java.util.List;
 
@@ -10,9 +10,9 @@ import java.util.List;
  */
 public interface MeetingService {
 
-    MeetingDto getMeeting(String callId);
+    Meeting getMeeting(String callId);
 
-    List<MeetingDto> getMeetings(String roomName, String uid);
+    List<Meeting> getMeetings(String roomName, String uid);
 
 
 }

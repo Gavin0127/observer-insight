@@ -1,6 +1,5 @@
 package com.insight.io.insight.repositories;
 
-import com.insight.io.insight.dto.MeetingDto;
 import com.insight.io.insight.models.Meeting;
 
 import java.util.List;

@@ -16,7 +16,7 @@ public class MediaSources {
     private String mediaType;
     private Double audioLevel;
     private Double totalAudioEnergy;
-    private Integer totalSamplesDuration;
+    private Double totalSamplesDuration;
     private Integer width;
     private Integer height;
     private Integer framesPerSecond;

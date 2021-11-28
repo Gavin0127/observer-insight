@@ -1,8 +1,9 @@
 package com.insight.io.insight.repositories;
 
 import com.insight.io.insight.configs.SourceConfig;
+import com.insight.io.insight.repositories.mongo.MongoEventRepoBuilder;
 import com.insight.io.insight.repositories.mongo.MongoMeetingRepoBuilder;
-import com.insight.io.insight.repositories.mongo.MongoUserSessionRepoBuilder;
+import com.insight.io.insight.repositories.mongo.MongoPeerConnectionRepoBuilder;
 import com.mongodb.client.MongoClient;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -24,7 +25,9 @@ public class RepositoryProvider {
 
     private static final Map<RepoType, MeetingRepository> meetingRepos =
             new ConcurrentHashMap<>();
-    private static final Map<RepoType, UserSessionRepository> userSessionRepos =
+    private static final Map<RepoType, PeerConnectionRepository> peerConnRepos =
+            new ConcurrentHashMap<>();
+    private static final Map<RepoType, EventRepository> eventRepos =
             new ConcurrentHashMap<>();
 
     @Inject
@@ -35,9 +38,14 @@ public class RepositoryProvider {
         return meetingRepos.get(valueOf(config.getType().toUpperCase()));
     }
 
-    public UserSessionRepository getUserSessionRepo(SourceConfig config) {
+    public PeerConnectionRepository getPeerConnRepo(SourceConfig config) {
         initRepo(config);
-        return userSessionRepos.get(valueOf(config.getType().toUpperCase()));
+        return peerConnRepos.get(valueOf(config.getType().toUpperCase()));
+    }
+
+    public EventRepository getEventRepo(SourceConfig config) {
+        initRepo(config);
+        return eventRepos.get(valueOf(config.getType().toUpperCase()));
     }
 
     private void initRepo(SourceConfig config) {
@@ -57,8 +65,11 @@ public class RepositoryProvider {
         meetingRepos.putIfAbsent(MONGO,
                 new MongoMeetingRepoBuilder(mongoClient).withConfig(config)
                         .build());
-        userSessionRepos.putIfAbsent(MONGO,
-                new MongoUserSessionRepoBuilder(mongoClient).withConfig(config)
+        peerConnRepos.putIfAbsent(MONGO,
+                new MongoPeerConnectionRepoBuilder(mongoClient).withConfig(config)
+                        .build());
+        eventRepos.putIfAbsent(MONGO,
+                new MongoEventRepoBuilder(mongoClient).withConfig(config)
                         .build());
     }
 

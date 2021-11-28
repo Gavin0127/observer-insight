@@ -10,7 +10,7 @@ import lombok.Data;
 public class ClientDetailss {
 
     private String peerConnectionUUID;
-    private String roomName;
+    private String callName;
     private String userId;
     private String osName;
     private String osVersion;

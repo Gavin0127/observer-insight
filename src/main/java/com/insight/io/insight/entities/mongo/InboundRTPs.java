@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class InboundRTPs {
 
-    private String ssrc;
+    private Long ssrc;
     private String peerConnectionUUID;
     private String trackId;
     private String transportId;

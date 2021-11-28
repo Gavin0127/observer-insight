@@ -1,6 +1,6 @@
 package com.insight.io.insight.controllers;
 
-import com.insight.io.insight.dto.UserSessionDto;
+import com.insight.io.insight.models.UserSession;
 import com.insight.io.insight.services.UserSessionService;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -22,10 +22,9 @@ public class UserController {
     private UserSessionService userSessionService;
 
     @Get("/{sid}")
-    public UserSessionDto getUserSession(
+    public UserSession getUserSession(
             @Parameter(description = "the user session id") String sid) {
-        UserSessionDto userSession = userSessionService.getUserSession(sid);
-        log.info(userSession.toString());
+        UserSession userSession = userSessionService.getUserSession(sid);
         return userSession;
     }
 

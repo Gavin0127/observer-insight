@@ -1,6 +1,6 @@
 package com.insight.io.insight.services;
 
-import com.insight.io.insight.dto.UserSessionDto;
+import com.insight.io.insight.models.UserSession;
 
 /**
  * @author Xiantao Ge
@@ -8,6 +8,6 @@ import com.insight.io.insight.dto.UserSessionDto;
  */
 public interface UserSessionService {
 
-    UserSessionDto getUserSession(String sid);
+    UserSession getUserSession(String sid);
 
 }

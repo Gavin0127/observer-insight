@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class OutBoundRTPs {
 
-    private String ssrc;
+    private Long ssrc;
     private String peerConnectionUUID;
     private String userId;
     private String callName;

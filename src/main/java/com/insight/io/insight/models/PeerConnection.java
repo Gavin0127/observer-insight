@@ -6,17 +6,18 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * @author Xiantao Ge
+ * @author : Xiantao Ge
  * @since 0.1
  */
 @Data
 @Builder
-public class Meeting {
-
-    private String mid;
-    private String roomName;
+public class PeerConnection {
+    private String peerConnectionUUID;
+    private String sid;
     private Long startTs;
     private Long endTs;
-    private List<UserSession> userSessions;
+    private List<PeerTrack> peerTracks;
+
+
 
 }
