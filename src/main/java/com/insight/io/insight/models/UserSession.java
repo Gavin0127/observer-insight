@@ -14,6 +14,7 @@ import java.util.List;
 public class UserSession {
 
     private String sid;
+    private String mid;
     private String roomName;
     private String uid;
     private Long startTs;

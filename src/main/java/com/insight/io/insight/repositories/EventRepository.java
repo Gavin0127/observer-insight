@@ -13,6 +13,7 @@ public interface EventRepository {
     void save(Event event);
 
     Event getEventBySidAndUri(String sid, Integer uri);
+    List<Event> getEventsByMidAndUri(String mid, Integer uri);
     List<Event> getEventBySid(String sid);
 
 }

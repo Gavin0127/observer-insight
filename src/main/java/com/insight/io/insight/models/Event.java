@@ -16,6 +16,9 @@ public class Event {
 
     private Integer uri;
     private String sid;
+    private String mid;
+    private String uid;
+    private String roomName;
     private Long ts;
     private String payload;
 
@@ -23,6 +26,8 @@ public class Event {
         EventBuilder builder = Event.builder();
         if (Objects.nonNull(events)) {
             builder.sid(events.getSid()).uri(events.getUri()).ts(events.getTs())
+                    .mid(events.getMid()).uid(events.getUid())
+                    .roomName(events.getRoomName())
                     .payload(events.getPayload());
         }
         return builder.build();

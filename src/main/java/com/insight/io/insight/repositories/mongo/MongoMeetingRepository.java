@@ -1,7 +1,9 @@
 package com.insight.io.insight.repositories.mongo;
 
+import com.insight.io.insight.entities.mongo.ExtensionReports;
 import com.insight.io.insight.entities.mongo.FinishedCalls;
 import com.insight.io.insight.entities.mongo.InitiatedCalls;
+import com.insight.io.insight.entities.mongo.JoinedPeerConnections;
 import com.insight.io.insight.models.Meeting;
 import com.insight.io.insight.repositories.MeetingRepository;
 import com.mongodb.client.MongoClient;
@@ -25,6 +27,10 @@ public class MongoMeetingRepository implements MeetingRepository {
     public static final String CALL_UUID = "callUUID";
     public static final String CALL_NAME = "callName";
     public static final String UID = "userId";
+    public static final String EXTENSION_TYPE = "extensionType";
+    public static final String MID = "mid";
+    public static final String PAYLOAD = "payload";
+    public static final String PEER_UUID = "peerConnectionUUID";
 
     private String database;
 
@@ -74,13 +80,22 @@ public class MongoMeetingRepository implements MeetingRepository {
 
     private Meeting.MeetingBuilder findInit(String mid,
             Meeting.MeetingBuilder builder) {
+        var extension = getCollection(ExtensionReports.class).find(
+                Filters.and(Filters.eq(EXTENSION_TYPE, MID),
+                        Filters.eq(PAYLOAD, mid))).first();
+        if (Objects.isNull(extension)) {
+            log.error("no peerConnectionId found, mid: " + mid);
+            return builder;
+        }
+        String pid = extension.getPeerConnectionUUID();
+        var jpc = getCollection(JoinedPeerConnections.class).find(
+                Filters.eq(PEER_UUID, pid)).first();
         var initiatedCall = getCollection(InitiatedCalls.class).find(
-                Filters.eq(CALL_UUID, mid)).first();
+                Filters.eq(CALL_UUID, jpc.getCallUUID())).first();
         if (Objects.isNull(initiatedCall)) {
             return builder;
         }
-        return builder.mid(initiatedCall.getCallUUID())
-                .roomName(initiatedCall.getCallName())
+        return builder.mid(mid).roomName(initiatedCall.getCallName())
                 .startTs(initiatedCall.getTimestamp());
     }
 

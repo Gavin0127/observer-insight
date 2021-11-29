@@ -33,6 +33,11 @@ public class EventRepoDelegation implements EventRepository {
     }
 
     @Override
+    public List<Event> getEventsByMidAndUri(String mid, Integer uri) {
+        return repoDelegation.getEventsByMidAndUri(mid, uri);
+    }
+
+    @Override
     public List<Event> getEventBySid(String sid) {
         return repoDelegation.getEventBySid(sid);
     }

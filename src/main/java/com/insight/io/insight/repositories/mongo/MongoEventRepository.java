@@ -23,6 +23,7 @@ public class MongoEventRepository implements EventRepository {
     public static final String PAYLOAD = "payload";
     public static final String URI = "uri";
     public static final String SID = "sid";
+    public static final String MID = "mid";
 
     private String database;
 
@@ -47,6 +48,14 @@ public class MongoEventRepository implements EventRepository {
         return Event.of(getCollection(Events.class).find(
                         Filters.and(Filters.eq(SID, sid), Filters.eq(URI, uri)))
                 .first());
+    }
+
+    @Override
+    public List<Event> getEventsByMidAndUri(String mid, Integer uri) {
+        return StreamSupport.stream(
+                        getCollection(Events.class).find(Filters.and(Filters.eq(MID, mid),Filters.eq(URI, uri)))
+                                .spliterator(), false).map(Event::of)
+                .collect(Collectors.toList());
     }
 
     @Override

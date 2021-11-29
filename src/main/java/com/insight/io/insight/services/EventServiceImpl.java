@@ -19,9 +19,11 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void upload(EventDto eventDto) {
-        eventRepository.save(Event.builder().uri(eventDto.getUri()).sid(eventDto.getSid())
-                .ts(Instant.now().toEpochMilli()).payload(eventDto.getPayload())
-                .build());
+        eventRepository.save(
+                Event.builder().uri(eventDto.getUri()).sid(eventDto.getSid())
+                        .ts(Instant.now().toEpochMilli()).mid(eventDto.getMid())
+                        .roomName(eventDto.getRoomName()).uid(eventDto.getUid())
+                        .payload(eventDto.getPayload()).build());
 
     }
 }

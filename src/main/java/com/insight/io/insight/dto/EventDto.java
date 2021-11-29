@@ -21,6 +21,12 @@ public class EventDto {
     private Integer uri;
     @Schema(description = "the user session id")
     private String sid;
+    @Schema(description = "the meeting id")
+    private String mid;
+    @Schema(description = "the meeting room name")
+    private String roomName;
+    @Schema(description = "the user id")
+    private String uid;
     @Schema(description = "the timestamp")
     private Long ts;
     @Schema(description = "the event payload")
