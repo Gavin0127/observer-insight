@@ -36,6 +36,9 @@ public class UserSessionServiceImpl implements UserSessionService {
     public UserSession getUserSession(String sid) {
 
         List<PeerConnection> pcs = pcRepo.getPeerConnectionsBySid(sid);
+        if (pcs.isEmpty()) {
+            return null;
+        }
 
         UserSession.ClientInfo info = pcRepo.getClientInfoBySid(sid);
 
@@ -49,7 +52,7 @@ public class UserSessionServiceImpl implements UserSessionService {
             startTs = pcs.stream().map(PeerConnection::getStartTs)
                     .min(Long::compareTo).get();
         } else {
-            startTs = leave.getTs();
+            startTs = join.getTs();
         }
 
         long endTs;

@@ -38,8 +38,9 @@ public class MongoEventRepository implements EventRepository {
         MongoCollection<Events> collection = getCollection(Events.class);
         collection.insertOne(
                 Events.builder().uri(event.getUri()).ts(event.getTs())
-                        .sid(event.getSid()).payload(event.getPayload())
-                        .build());
+                        .sid(event.getSid()).mid(event.getMid())
+                        .roomName(event.getRoomName()).uid(event.getUid())
+                        .payload(event.getPayload()).build());
 
     }
 
@@ -52,9 +53,10 @@ public class MongoEventRepository implements EventRepository {
 
     @Override
     public List<Event> getEventsByMidAndUri(String mid, Integer uri) {
-        return StreamSupport.stream(
-                        getCollection(Events.class).find(Filters.and(Filters.eq(MID, mid),Filters.eq(URI, uri)))
-                                .spliterator(), false).map(Event::of)
+        return StreamSupport.stream(getCollection(Events.class).find(
+                                Filters.and(Filters.eq(MID, mid),
+                                        Filters.eq(URI, uri)))
+                        .spliterator(), false).map(Event::of)
                 .collect(Collectors.toList());
     }
 
