@@ -29,7 +29,7 @@ public class MongoMeetingRepository implements MeetingRepository {
     public static final String UID = "userId";
     public static final String EXTENSION_TYPE = "extensionType";
     public static final String MID = "mid";
-    public static final String PAYLOAD = "payload";
+    public static final String PAYLOAD = "content";
     public static final String PEER_UUID = "peerConnectionUUID";
 
     private String database;
