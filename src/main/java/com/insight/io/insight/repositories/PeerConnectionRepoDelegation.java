@@ -40,6 +40,12 @@ public class PeerConnectionRepoDelegation implements PeerConnectionRepository {
     }
 
     @Override
+    public List<PeerConnection> getPeerConnectionsBySidWithoutStats(
+            String sid) {
+        return repoDelegation.getPeerConnectionsBySidWithoutStats(sid);
+    }
+
+    @Override
     public PeerConnection getPeerConnection(String peerConnectionUUID) {
         return repoDelegation.getPeerConnection(peerConnectionUUID);
     }

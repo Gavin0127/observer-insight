@@ -1,10 +1,7 @@
 package com.insight.io.insight.repositories.mongo;
 
 import com.insight.io.insight.entities.mongo.*;
-import com.insight.io.insight.models.InboundTrack;
-import com.insight.io.insight.models.PeerConnection;
-import com.insight.io.insight.models.PeerTrack;
-import com.insight.io.insight.models.UserSession;
+import com.insight.io.insight.models.*;
 import com.insight.io.insight.repositories.PeerConnectionRepository;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -43,10 +40,9 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
 
     @Override
     public UserSession.ClientInfo getClientInfoBySid(String sid) {
-        var extensionReports =
-                getCollection(ExtensionReports.class).find(Filters.and(Filters.eq(EXTENSION_TYPE, SID),
-                                Filters.eq(PAYLOAD, sid)))
-                        .first();
+        var extensionReports = getCollection(ExtensionReports.class).find(
+                Filters.and(Filters.eq(EXTENSION_TYPE, SID),
+                        Filters.eq(PAYLOAD, sid))).first();
         if (Objects.isNull(extensionReports)) {
             log.error("extensionStats cannot be found, sid: " + sid);
             return null;
@@ -73,16 +69,6 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
     @Override
     public List<PeerConnection> getPeerConnectionsByMid(String mid) {
         throw new RuntimeException("getPeerConnectionsByMid is not available");
-        //        var jpc = getCollection(JoinedPeerConnections.class).find(
-        //                Filters.eq(CALL_UUID, mid));
-        //
-        //        return StreamSupport.stream(
-        //                        jpc.map
-        //                        (JoinedPeerConnections::getPeerConnectionUUID)
-        //                                .spliterator(), false).map
-        //                                (this::getPeerConnection)
-        //                .collect(Collectors.toList());
-
     }
 
     @Override
@@ -93,6 +79,23 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
         return StreamSupport.stream(extensionReports.spliterator(), false)
                 .map(ExtensionReports::getPeerConnectionUUID).distinct()
                 .map(this::getPeerConnection).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PeerConnection> getPeerConnectionsBySidWithoutStats(String sid) {
+        var extensionReports = getCollection(ExtensionReports.class).find(
+                Filters.and(Filters.eq(EXTENSION_TYPE, SID),
+                        Filters.eq(PAYLOAD, sid)));
+        return StreamSupport.stream(extensionReports.spliterator(), false)
+                .map(ExtensionReports::getPeerConnectionUUID).distinct()
+                .map(this::getPeerConnectionWithoutStat).collect(Collectors.toList());
+    }
+
+    public PeerConnection getPeerConnectionWithoutStat(String peerConnectionUUID) {
+        PeerConnection.PeerConnectionBuilder builder = PeerConnection.builder();
+        findInit(peerConnectionUUID, builder);
+        findEnd(peerConnectionUUID, builder);
+        return builder.build();
     }
 
     @Override
@@ -140,47 +143,102 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
         var inboundMap = inboundRTPsStream.collect(
                 Collectors.groupingBy(InboundRTPs::getTrackId));
 
-        //        var tracks = getCollection(Tracks.class).find(
-        //                Filters.eq(PEER_UUID, peerConnectionUUID));
-        //        var tracksMap = StreamSupport.stream(tracks.spliterator(),
-        //        false)
-        //                .collect(Collectors.groupingBy(Tracks::getTrackId));
-        //
-        //        var media = getCollection(MediaSources.class).find(
-        //                Filters.eq(PEER_UUID, peerConnectionUUID));
-        //        var mediaMap = StreamSupport.stream(media.spliterator(),
-        //        false)
-        //                .collect(Collectors.groupingBy
-        //                (MediaSources::getMediaSourceID));
-        //
-        //        var outBoundRTPs = getCollection(OutBoundRTPs.class).find(
-        //                Filters.eq(PEER_UUID, peerConnectionUUID));
-        //        var outboundMap =
-        //                StreamSupport.stream(outBoundRTPs.spliterator(),
-        //                false).collect(
-        //                        Collectors.groupingBy
-        //                        (OutBoundRTPs::getTrackId));
+        var tracks = getCollection(Tracks.class).find(
+                Filters.eq(PEER_UUID, peerConnectionUUID));
+        var tracksMap = StreamSupport.stream(tracks.spliterator(), false)
+                .collect(Collectors.groupingBy(Tracks::getTrackId));
+
+//        var media = getCollection(MediaSources.class).find(
+//                Filters.eq(PEER_UUID, peerConnectionUUID));
+//
+//        var mediaMap = StreamSupport.stream(media.spliterator(), false)
+//                .collect(Collectors.groupingBy(MediaSources::getMediaSourceID));
+
+        var outBoundRTPs = getCollection(OutBoundRTPs.class).find(
+                Filters.eq(PEER_UUID, peerConnectionUUID));
+        var outboundMap =
+                StreamSupport.stream(outBoundRTPs.spliterator(), false).collect(
+                        Collectors.groupingBy(OutBoundRTPs::getTrackId));
 
         List<PeerTrack> peerTracks = new ArrayList<>();
-        inboundMap.entrySet().forEach(e -> {
+        tracksMap.entrySet().forEach(track -> {
             PeerTrack.PeerTrackBuilder trackBuilder = PeerTrack.builder();
-            String trackId = e.getKey();
+            String trackId = track.getKey();
             trackBuilder.trackId(trackId);
             InboundTrack inboundTrack = new InboundTrack();
             trackBuilder.inboundTrack(inboundTrack);
-            e.getValue().forEach(stat -> {
+            OutboundTrack outboundTrack = new OutboundTrack();
+            trackBuilder.outboundTrack(outboundTrack);
+            track.getValue().forEach(stat -> {
                 trackBuilder.mediaType(stat.getMediaType());
+                if (stat.getRemoteSource()) {
+                    inboundTrack.getFrameReceived()
+                            .put(stat.getTimestamp(), stat.getFrameReceived());
+                    inboundTrack.getFrameDropped()
+                            .put(stat.getTimestamp(), stat.getFrameDropped());
+                    inboundTrack.getFrameWidth()
+                            .put(stat.getTimestamp(), stat.getFrameWidth());
+                    inboundTrack.getFrameHeight()
+                            .put(stat.getTimestamp(), stat.getFrameHeight());
+                    inboundTrack.getJitterBufferDelay().put(stat.getTimestamp(),
+                            stat.getJitterBufferDelay());
+                } else {
+                    outboundTrack.getFrameHeight()
+                            .put(stat.getTimestamp(), stat.getFrameHeight());
+                    outboundTrack.getFrameWidth()
+                            .put(stat.getTimestamp(), stat.getFrameWidth());
+                    outboundTrack.getHugeFramesSent()
+                            .put(stat.getTimestamp(), stat.getHugeFramesSent());
+                }
+
+            });
+            List<InboundRTPs> inbounds =
+                    inboundMap.getOrDefault(trackId, new ArrayList<>());
+            inbounds.forEach(stat -> {
                 trackBuilder.ssrc(stat.getSsrc());
+                inboundTrack.setSsrc(stat.getSsrc());
                 inboundTrack.getFrameDecoded()
                         .put(stat.getTimestamp(), stat.getFramesDecoded());
                 inboundTrack.getKeyFrameDecoded()
                         .put(stat.getTimestamp(), stat.getKeyFramesDecoded());
-                //TODO 补充完整stats
+                inboundTrack.getPacketsReceived()
+                        .put(stat.getTimestamp(), stat.getPacketsReceived());
+                inboundTrack.getPacketsLost()
+                        .put(stat.getTimestamp(), stat.getPacketsLost());
+                inboundTrack.getQpSum()
+                        .put(stat.getTimestamp(), stat.getQpSum());
+                inboundTrack.getBytesReceived()
+                        .put(stat.getTimestamp(), stat.getBytesReceived());
+                inboundTrack.getFirCount()
+                        .put(stat.getTimestamp(), stat.getFirCount());
+                inboundTrack.getJitter()
+                        .put(stat.getTimestamp(), stat.getJitter());
 
+            });
+            List<OutBoundRTPs> outbounds =
+                    outboundMap.getOrDefault(trackId, new ArrayList<>());
+            outbounds.forEach(stat -> {
+                trackBuilder.ssrc(stat.getSsrc());
+                outboundTrack.setSsrc(stat.getSsrc());
+                outboundTrack.getFrameEncoded()
+                        .put(stat.getTimestamp(), stat.getFramesEncoded());
+                outboundTrack.getKeyFrameEncoded()
+                        .put(stat.getTimestamp(), stat.getKeyFramesEncoded());
+                outboundTrack.getRetransmittedBytesSent()
+                        .put(stat.getTimestamp(),
+                                stat.getRetransmittedBytesSent());
+                outboundTrack.getTotalEncodedBytesTarget()
+                        .put(stat.getTimestamp(),
+                                stat.getTotalEncodedBytesTarget());
+                outboundTrack.getQpSum()
+                        .put(stat.getTimestamp(), stat.getQpSum());
+                outboundTrack.getFirCount()
+                        .put(stat.getTimestamp(), stat.getFirCount());
+                outboundTrack.getBytesSent()
+                        .put(stat.getTimestamp(), stat.getBytesSent());
             });
             peerTracks.add(trackBuilder.build());
         });
-        // TODO outbound
 
         return builder.peerTracks(peerTracks);
     }

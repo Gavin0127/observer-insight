@@ -46,7 +46,8 @@ public class MeetingServiceImpl implements MeetingService {
                 .collect(Collectors.toList());
         List<UserSession> userSessions = new ArrayList<>();
         sids.forEach(sid -> {
-            UserSession userSession = userSessionService.getUserSession(sid);
+            UserSession userSession =
+                    userSessionService.getUserSession(sid, false);
             if (Objects.nonNull(userSession)) {
                 userSessions.add(userSession);
             }

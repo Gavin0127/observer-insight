@@ -17,6 +17,8 @@ public interface PeerConnectionRepository {
 
     List<PeerConnection> getPeerConnectionsBySid(String sid);
 
+    List<PeerConnection> getPeerConnectionsBySidWithoutStats(String sid);
+
     PeerConnection getPeerConnection(String peerConnectionUUID);
 
 }

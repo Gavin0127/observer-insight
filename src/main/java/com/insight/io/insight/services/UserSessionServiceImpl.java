@@ -9,10 +9,7 @@ import com.insight.io.insight.repositories.PeerConnectionRepository;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -34,16 +31,21 @@ public class UserSessionServiceImpl implements UserSessionService {
     }
 
     @Override
-    public UserSession getUserSession(String sid) {
-
-        List<PeerConnection> pcs = pcRepo.getPeerConnectionsBySid(sid);
+    public UserSession getUserSession(String sid, boolean stats) {
+        List<PeerConnection> pcs;
+        List<Event> events = new ArrayList<>();
+        if (stats) {
+            pcs = pcRepo.getPeerConnectionsBySid(sid);
+            events = eventRepo.getEventBySid(sid);
+        } else {
+            pcs = pcRepo.getPeerConnectionsBySidWithoutStats(sid);
+        }
         if (pcs.isEmpty()) {
             return null;
         }
 
         UserSession.ClientInfo info = pcRepo.getClientInfoBySid(sid);
 
-        List<Event> events = eventRepo.getEventBySid(sid);
         Map<Integer, Event> eventMap = events.stream()
                 .collect(Collectors.toMap(Event::getUri, Function.identity()));
         Event join = eventMap.get(EventType.JOIN.getUri());

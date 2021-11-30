@@ -8,6 +8,6 @@ import com.insight.io.insight.models.UserSession;
  */
 public interface UserSessionService {
 
-    UserSession getUserSession(String sid);
+    UserSession getUserSession(String sid, boolean stats);
 
 }

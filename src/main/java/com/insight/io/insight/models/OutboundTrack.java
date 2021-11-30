@@ -13,6 +13,7 @@ import java.util.TreeMap;
 @NoArgsConstructor
 public class OutboundTrack {
 
+    private Long ssrc;
     private TreeMap<Long, Integer> frameEncoded = new TreeMap<>();
     private TreeMap<Long, Integer> keyFrameEncoded = new TreeMap<>();
     private TreeMap<Long, Integer> retransmittedBytesSent = new TreeMap<>();

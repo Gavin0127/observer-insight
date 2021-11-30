@@ -22,5 +22,6 @@ public class Tracks {
     private Integer frameDropped;
     private Integer hugeFramesSent;
     private Double jitterBufferDelay;
+    private Boolean remoteSource;
 
 }
