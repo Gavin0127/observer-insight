@@ -53,10 +53,19 @@ public class MongoMeetingRepository implements MeetingRepository {
         }
         var initiatedCalls = getCollection(InitiatedCalls.class).find(filter);
         var result = new ArrayList<Meeting>();
+
         initiatedCalls.forEach(call -> {
             String callUUID = call.getCallUUID();
+            var jpc = getCollection(JoinedPeerConnections.class).find(
+                    Filters.eq(CALL_UUID, callUUID)).first();
+            var extension = getCollection(ExtensionReports.class).find(
+                            Filters.and(Filters.eq(EXTENSION_TYPE, MID),
+                                    Filters.eq(PEER_UUID,
+                                            jpc.getPeerConnectionUUID())))
+                    .first();
             Meeting.MeetingBuilder meetingBuilder =
-                    Meeting.builder().mid(callUUID).roomName(call.getCallName())
+                    Meeting.builder().mid(extension.getPayload())
+                            .roomName(call.getCallName())
                             .startTs(call.getTimestamp());
             var finishedCall = getCollection(FinishedCalls.class).find(
                     Filters.eq(CALL_UUID, callUUID)).first();
@@ -101,11 +110,18 @@ public class MongoMeetingRepository implements MeetingRepository {
 
     private Meeting.MeetingBuilder findEnd(String mid,
             Meeting.MeetingBuilder builder) {
-        if (Objects.isNull(builder)) {
-            return null;
+        var extension = getCollection(ExtensionReports.class).find(
+                Filters.and(Filters.eq(EXTENSION_TYPE, MID),
+                        Filters.eq(PAYLOAD, mid))).first();
+        if (Objects.isNull(extension)) {
+            log.error("no peerConnectionId found, mid: " + mid);
+            return builder;
         }
+        String pid = extension.getPeerConnectionUUID();
+        var jpc = getCollection(JoinedPeerConnections.class).find(
+                Filters.eq(PEER_UUID, pid)).first();
         var finishedCall = getCollection(FinishedCalls.class).find(
-                Filters.eq(CALL_UUID, mid)).first();
+                Filters.eq(CALL_UUID, jpc.getCallUUID())).first();
         if (Objects.nonNull(finishedCall)) {
             builder.endTs(finishedCall.getTimestamp());
         }

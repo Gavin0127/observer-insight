@@ -111,10 +111,10 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
         var peer = getCollection(JoinedPeerConnections.class).find(
                 Filters.eq(PEER_UUID, peerConnectionUUID)).first();
         if (Objects.isNull(peer)) {
-            return builder;
+            return builder.startTs(0L);
         }
         return builder.peerConnectionUUID(peer.getPeerConnectionUUID())
-                .sid(peer.getMarker()).startTs(peer.getTimestamp());
+                .startTs(peer.getTimestamp());
     }
 
     private PeerConnection.PeerConnectionBuilder findEnd(
@@ -123,7 +123,7 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
         var peer = getCollection(DetachedPeerConnections.class).find(
                 Filters.eq(PEER_UUID, peerConnectionUUID)).first();
         if (Objects.isNull(peer)) {
-            return builder;
+            return builder.endTs(0L);
         }
         return builder.peerConnectionUUID(peer.getPeerConnectionUUID())
                 .endTs(peer.getTimestamp());

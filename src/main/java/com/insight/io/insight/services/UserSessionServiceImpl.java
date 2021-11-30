@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -47,18 +48,24 @@ public class UserSessionServiceImpl implements UserSessionService {
                 .collect(Collectors.toMap(Event::getUri, Function.identity()));
         Event join = eventMap.get(EventType.JOIN.getUri());
         Event leave = eventMap.get(EventType.LEAVE.getUri());
-        long startTs;
+        long startTs = 0;
         if (Objects.isNull(leave)) {
-            startTs = pcs.stream().map(PeerConnection::getStartTs)
-                    .min(Long::compareTo).get();
+            Optional<Long> min = pcs.stream().map(PeerConnection::getStartTs)
+                    .min(Long::compareTo);
+            if (min.isPresent()) {
+                startTs = min.get();
+            }
         } else {
             startTs = join.getTs();
         }
 
-        long endTs;
+        long endTs = 0;
         if (Objects.isNull(leave)) {
-            endTs = pcs.stream().map(PeerConnection::getEndTs)
-                    .max(Long::compareTo).get();
+            Optional<Long> max = pcs.stream().map(PeerConnection::getEndTs)
+                    .max(Long::compareTo);
+            if (max.isPresent()) {
+                endTs = max.get();
+            }
         } else {
             endTs = leave.getTs();
         }
