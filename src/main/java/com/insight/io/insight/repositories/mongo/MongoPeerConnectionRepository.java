@@ -28,7 +28,10 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
 
     public static final String PEER_UUID = "peerConnectionUUID";
     public static final String CALL_UUID = "callUUID";
-    public static final String SID = "marker";
+    public static final String SID = "sid";
+    public static final String EXTENSION_TYPE = "extensionType";
+    public static final String MID = "mid";
+    public static final String PAYLOAD = "content";
 
     private String database;
 
@@ -40,10 +43,21 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
 
     @Override
     public UserSession.ClientInfo getClientInfoBySid(String sid) {
-        ClientDetailss info =
-                getCollection(ClientDetailss.class).find(Filters.eq(SID, sid))
+        var extensionReports =
+                getCollection(ExtensionReports.class).find(Filters.and(Filters.eq(EXTENSION_TYPE, SID),
+                                Filters.eq(PAYLOAD, sid)))
                         .first();
+        if (Objects.isNull(extensionReports)) {
+            log.error("extensionStats cannot be found, sid: " + sid);
+            return null;
+        }
+        ClientDetailss info = getCollection(ClientDetailss.class).find(
+                        Filters.eq(PEER_UUID,
+                                extensionReports.getPeerConnectionUUID()))
+                .first();
         if (Objects.isNull(info)) {
+            log.error("ClientDetails cannot be found, PeerId: " +
+                    extensionReports.getPeerConnectionUUID());
             return null;
         }
         return UserSession.ClientInfo.builder().uid(info.getUserId())
@@ -54,30 +68,31 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
                 .engineName(info.getEngineName())
                 .engineVersion(info.getEngineVersion())
                 .platformVendor(info.getPlatformVendor()).build();
-
     }
 
     @Override
     public List<PeerConnection> getPeerConnectionsByMid(String mid) {
-        var jpc = getCollection(JoinedPeerConnections.class).find(
-                Filters.eq(CALL_UUID, mid));
-
-        return StreamSupport.stream(
-                        jpc.map(JoinedPeerConnections::getPeerConnectionUUID)
-                                .spliterator(), false).map(this::getPeerConnection)
-                .collect(Collectors.toList());
+        throw new RuntimeException("getPeerConnectionsByMid is not available");
+        //        var jpc = getCollection(JoinedPeerConnections.class).find(
+        //                Filters.eq(CALL_UUID, mid));
+        //
+        //        return StreamSupport.stream(
+        //                        jpc.map
+        //                        (JoinedPeerConnections::getPeerConnectionUUID)
+        //                                .spliterator(), false).map
+        //                                (this::getPeerConnection)
+        //                .collect(Collectors.toList());
 
     }
 
     @Override
     public List<PeerConnection> getPeerConnectionsBySid(String sid) {
-        var jpc = getCollection(JoinedPeerConnections.class).find(
-                Filters.eq(SID, sid));
-
-        return StreamSupport.stream(
-                        jpc.map(JoinedPeerConnections::getPeerConnectionUUID)
-                                .spliterator(), false).map(this::getPeerConnection)
-                .collect(Collectors.toList());
+        var extensionReports = getCollection(ExtensionReports.class).find(
+                Filters.and(Filters.eq(EXTENSION_TYPE, SID),
+                        Filters.eq(PAYLOAD, sid)));
+        return StreamSupport.stream(extensionReports.spliterator(), false)
+                .map(ExtensionReports::getPeerConnectionUUID).distinct()
+                .map(this::getPeerConnection).collect(Collectors.toList());
     }
 
     @Override
@@ -122,24 +137,29 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
                 getCollection(InboundRTPs.class).find(
                                 Filters.eq(PEER_UUID, peerConnectionUUID))
                         .spliterator(), false);
-        var inboundMap = inboundRTPsStream
-                .collect(Collectors.groupingBy(InboundRTPs::getTrackId));
+        var inboundMap = inboundRTPsStream.collect(
+                Collectors.groupingBy(InboundRTPs::getTrackId));
 
-//        var tracks = getCollection(Tracks.class).find(
-//                Filters.eq(PEER_UUID, peerConnectionUUID));
-//        var tracksMap = StreamSupport.stream(tracks.spliterator(), false)
-//                .collect(Collectors.groupingBy(Tracks::getTrackId));
-//
-//        var media = getCollection(MediaSources.class).find(
-//                Filters.eq(PEER_UUID, peerConnectionUUID));
-//        var mediaMap = StreamSupport.stream(media.spliterator(), false)
-//                .collect(Collectors.groupingBy(MediaSources::getMediaSourceID));
-//
-//        var outBoundRTPs = getCollection(OutBoundRTPs.class).find(
-//                Filters.eq(PEER_UUID, peerConnectionUUID));
-//        var outboundMap =
-//                StreamSupport.stream(outBoundRTPs.spliterator(), false).collect(
-//                        Collectors.groupingBy(OutBoundRTPs::getTrackId));
+        //        var tracks = getCollection(Tracks.class).find(
+        //                Filters.eq(PEER_UUID, peerConnectionUUID));
+        //        var tracksMap = StreamSupport.stream(tracks.spliterator(),
+        //        false)
+        //                .collect(Collectors.groupingBy(Tracks::getTrackId));
+        //
+        //        var media = getCollection(MediaSources.class).find(
+        //                Filters.eq(PEER_UUID, peerConnectionUUID));
+        //        var mediaMap = StreamSupport.stream(media.spliterator(),
+        //        false)
+        //                .collect(Collectors.groupingBy
+        //                (MediaSources::getMediaSourceID));
+        //
+        //        var outBoundRTPs = getCollection(OutBoundRTPs.class).find(
+        //                Filters.eq(PEER_UUID, peerConnectionUUID));
+        //        var outboundMap =
+        //                StreamSupport.stream(outBoundRTPs.spliterator(),
+        //                false).collect(
+        //                        Collectors.groupingBy
+        //                        (OutBoundRTPs::getTrackId));
 
         List<PeerTrack> peerTracks = new ArrayList<>();
         inboundMap.entrySet().forEach(e -> {
