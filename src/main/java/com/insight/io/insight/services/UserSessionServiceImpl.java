@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -43,11 +44,25 @@ public class UserSessionServiceImpl implements UserSessionService {
                 .collect(Collectors.toMap(Event::getUri, Function.identity()));
         Event join = eventMap.get(EventType.JOIN.getUri());
         Event leave = eventMap.get(EventType.LEAVE.getUri());
+        long startTs;
+        if (Objects.isNull(leave)) {
+            startTs = pcs.stream().map(PeerConnection::getStartTs)
+                    .min(Long::compareTo).get();
+        } else {
+            startTs = leave.getTs();
+        }
+
+        long endTs;
+        if (Objects.isNull(leave)) {
+            endTs = pcs.stream().map(PeerConnection::getEndTs)
+                    .max(Long::compareTo).get();
+        } else {
+            endTs = leave.getTs();
+        }
 
         return UserSession.builder().sid(sid).uid(info.getUid())
-                .roomName(info.getRoomName()).startTs(join.getTs())
-                .endTs(leave.getTs()).peerConnections(pcs).events(events)
-                .build();
+                .roomName(info.getRoomName()).startTs(startTs).endTs(endTs)
+                .peerConnections(pcs).events(events).build();
     }
 
 
