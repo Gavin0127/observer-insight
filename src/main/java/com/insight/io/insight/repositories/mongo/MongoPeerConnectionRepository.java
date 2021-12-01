@@ -9,9 +9,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -24,6 +22,7 @@ import java.util.stream.StreamSupport;
 public class MongoPeerConnectionRepository implements PeerConnectionRepository {
 
     public static final String PEER_UUID = "peerConnectionUUID";
+    public static final String MEDIA_ID = "mediaSourceId";
     public static final String CALL_UUID = "callUUID";
     public static final String SID = "sid";
     public static final String EXTENSION_TYPE = "extensionType";
@@ -82,16 +81,19 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
     }
 
     @Override
-    public List<PeerConnection> getPeerConnectionsBySidWithoutStats(String sid) {
+    public List<PeerConnection> getPeerConnectionsBySidWithoutStats(
+            String sid) {
         var extensionReports = getCollection(ExtensionReports.class).find(
                 Filters.and(Filters.eq(EXTENSION_TYPE, SID),
                         Filters.eq(PAYLOAD, sid)));
         return StreamSupport.stream(extensionReports.spliterator(), false)
                 .map(ExtensionReports::getPeerConnectionUUID).distinct()
-                .map(this::getPeerConnectionWithoutStat).collect(Collectors.toList());
+                .map(this::getPeerConnectionWithoutStat)
+                .collect(Collectors.toList());
     }
 
-    public PeerConnection getPeerConnectionWithoutStat(String peerConnectionUUID) {
+    public PeerConnection getPeerConnectionWithoutStat(
+            String peerConnectionUUID) {
         PeerConnection.PeerConnectionBuilder builder = PeerConnection.builder();
         findInit(peerConnectionUUID, builder);
         findEnd(peerConnectionUUID, builder);
@@ -148,17 +150,18 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
         var tracksMap = StreamSupport.stream(tracks.spliterator(), false)
                 .collect(Collectors.groupingBy(Tracks::getTrackId));
 
-//        var media = getCollection(MediaSources.class).find(
-//                Filters.eq(PEER_UUID, peerConnectionUUID));
-//
-//        var mediaMap = StreamSupport.stream(media.spliterator(), false)
-//                .collect(Collectors.groupingBy(MediaSources::getMediaSourceID));
+        var media = getCollection(MediaSources.class).find(
+                Filters.and(Filters.eq(PEER_UUID, peerConnectionUUID),
+                        Filters.ne(MEDIA_ID, null)));
 
-        var outBoundRTPs = getCollection(OutBoundRTPs.class).find(
+        var mediaMap = StreamSupport.stream(media.spliterator(), false)
+                .collect(Collectors.groupingBy(MediaSources::getMediaSourceId));
+
+        var outBoundRTPs = getCollection(OutboundRTPs.class).find(
                 Filters.eq(PEER_UUID, peerConnectionUUID));
         var outboundMap =
                 StreamSupport.stream(outBoundRTPs.spliterator(), false).collect(
-                        Collectors.groupingBy(OutBoundRTPs::getTrackId));
+                        Collectors.groupingBy(OutboundRTPs::getTrackID));
 
         List<PeerTrack> peerTracks = new ArrayList<>();
         tracksMap.entrySet().forEach(track -> {
@@ -196,7 +199,6 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
                     inboundMap.getOrDefault(trackId, new ArrayList<>());
             inbounds.forEach(stat -> {
                 trackBuilder.ssrc(stat.getSsrc());
-                inboundTrack.setSsrc(stat.getSsrc());
                 inboundTrack.getFrameDecoded()
                         .put(stat.getTimestamp(), stat.getFramesDecoded());
                 inboundTrack.getKeyFrameDecoded()
@@ -215,8 +217,9 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
                         .put(stat.getTimestamp(), stat.getJitter());
 
             });
-            List<OutBoundRTPs> outbounds =
+            List<OutboundRTPs> outbounds =
                     outboundMap.getOrDefault(trackId, new ArrayList<>());
+            Set<String> mediaIds = new HashSet<>();
             outbounds.forEach(stat -> {
                 trackBuilder.ssrc(stat.getSsrc());
                 outboundTrack.setSsrc(stat.getSsrc());
@@ -236,6 +239,25 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
                         .put(stat.getTimestamp(), stat.getFirCount());
                 outboundTrack.getBytesSent()
                         .put(stat.getTimestamp(), stat.getBytesSent());
+                mediaIds.add(stat.getMediaSourceID());
+            });
+            mediaIds.forEach(mediaId -> {
+                List<MediaSources> sources =
+                        mediaMap.getOrDefault(mediaId, new ArrayList<>());
+                sources.forEach(stat -> {
+                    outboundTrack.getTotalAudioEnergy().put(stat.getTimestamp(),
+                            stat.getTotalAudioEnergy());
+                    outboundTrack.getWidth()
+                            .put(stat.getTimestamp(), stat.getWidth());
+                    outboundTrack.getHeight()
+                            .put(stat.getTimestamp(), stat.getHeight());
+                    outboundTrack.getTotalSamplesDuration()
+                            .put(stat.getTimestamp(),
+                                    stat.getTotalSamplesDuration());
+                    outboundTrack.getAudioLevel()
+                            .put(stat.getTimestamp(), stat.getAudioLevel());
+                });
+
             });
             peerTracks.add(trackBuilder.build());
         });

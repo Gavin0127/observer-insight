@@ -6,6 +6,7 @@ import com.insight.io.insight.entities.mongo.InitiatedCalls;
 import com.insight.io.insight.entities.mongo.JoinedPeerConnections;
 import com.insight.io.insight.models.Meeting;
 import com.insight.io.insight.repositories.MeetingRepository;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -42,16 +43,21 @@ public class MongoMeetingRepository implements MeetingRepository {
 
     @Override
     public List<Meeting> getMeetings(String roomName, String uid) {
-        Bson filter;
+        Bson filter = null;
         if (Objects.nonNull(roomName) && Objects.nonNull(uid)) {
             filter = Filters.and(Filters.eq(CALL_NAME, roomName),
                     Filters.eq(UID, uid));
         } else if (Objects.nonNull(roomName)) {
             filter = Filters.eq(CALL_NAME, roomName);
-        } else {
+        } else if (Objects.nonNull(uid)) {
             filter = Filters.eq(UID, uid);
         }
-        var initiatedCalls = getCollection(InitiatedCalls.class).find(filter);
+        FindIterable<InitiatedCalls> initiatedCalls;
+        if (Objects.nonNull(filter)) {
+            initiatedCalls = getCollection(InitiatedCalls.class).find(filter);
+        } else {
+            initiatedCalls = getCollection(InitiatedCalls.class).find();
+        }
         var result = new ArrayList<Meeting>();
 
         initiatedCalls.forEach(call -> {

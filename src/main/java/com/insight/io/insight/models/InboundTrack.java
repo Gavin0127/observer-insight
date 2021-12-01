@@ -13,7 +13,6 @@ import java.util.TreeMap;
 @NoArgsConstructor
 public class InboundTrack {
 
-    private Long ssrc;
     private TreeMap<Long, Integer> frameDecoded = new TreeMap<>();
     private TreeMap<Long, Integer> keyFrameDecoded = new TreeMap<>();
     private TreeMap<Long, Integer> packetsReceived = new TreeMap<>();
@@ -28,11 +27,6 @@ public class InboundTrack {
     private TreeMap<Long, Integer> frameHeight = new TreeMap<>();
     private TreeMap<Long, Integer> framePerSecond = new TreeMap<>();
     private TreeMap<Long, Double> jitterBufferDelay = new TreeMap<>();
-    private TreeMap<Long, Integer> width = new TreeMap<>();
-    private TreeMap<Long, Integer> height = new TreeMap<>();
-    private TreeMap<Long, Integer> audioLevel = new TreeMap<>();
-    private TreeMap<Long, Double> totalAudioEnergy = new TreeMap<>();
-    private TreeMap<Long, Double> totalSamplesDuration = new TreeMap<>();
 
     //    @Data
     //    @Builder

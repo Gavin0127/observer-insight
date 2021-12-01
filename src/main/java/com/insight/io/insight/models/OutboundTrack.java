@@ -26,6 +26,11 @@ public class OutboundTrack {
     private TreeMap<Long, Integer> frameDropped = new TreeMap<>();
     private TreeMap<Long, Integer> hugeFramesSent = new TreeMap<>();
     private TreeMap<Long, Integer> framePerSecond = new TreeMap<>();
+    private TreeMap<Long, Integer> width = new TreeMap<>();
+    private TreeMap<Long, Integer> height = new TreeMap<>();
+    private TreeMap<Long, Double> audioLevel = new TreeMap<>();
+    private TreeMap<Long, Double> totalAudioEnergy = new TreeMap<>();
+    private TreeMap<Long, Double> totalSamplesDuration = new TreeMap<>();
     //    private List<OutboundSample> outboundSamples;
 
     //    @Data

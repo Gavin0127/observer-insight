@@ -6,6 +6,7 @@ import com.insight.io.insight.models.PeerConnection;
 import com.insight.io.insight.models.UserSession;
 import com.insight.io.insight.repositories.EventRepository;
 import com.insight.io.insight.repositories.PeerConnectionRepository;
+import io.micronaut.core.util.CollectionUtils;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,10 +47,18 @@ public class UserSessionServiceImpl implements UserSessionService {
 
         UserSession.ClientInfo info = pcRepo.getClientInfoBySid(sid);
 
-        Map<Integer, Event> eventMap = events.stream()
-                .collect(Collectors.toMap(Event::getUri, Function.identity()));
-        Event join = eventMap.get(EventType.JOIN.getUri());
-        Event leave = eventMap.get(EventType.LEAVE.getUri());
+        Map<Integer, List<Event>> eventMap =
+                events.stream().collect(Collectors.groupingBy(Event::getUri));
+        List<Event> joinList = eventMap.get(EventType.JOIN.getUri());
+        Event join = null;
+        if (CollectionUtils.isNotEmpty(joinList)) {
+            join = joinList.get(0);
+        }
+        List<Event> leaveList = eventMap.get(EventType.LEAVE.getUri());
+        Event leave = null;
+        if (CollectionUtils.isNotEmpty(leaveList)) {
+            leave = leaveList.get(0);
+        }
         long startTs = 0;
         if (Objects.isNull(leave)) {
             Optional<Long> min = pcs.stream().map(PeerConnection::getStartTs)
@@ -72,9 +81,10 @@ public class UserSessionServiceImpl implements UserSessionService {
             endTs = leave.getTs();
         }
 
-        return UserSession.builder().sid(sid).uid(info.getUid())
-                .roomName(info.getRoomName()).startTs(startTs).endTs(endTs)
-                .peerConnections(pcs).events(events).build();
+        return UserSession.builder().clientInfo(info).sid(sid)
+                .uid(info.getUid()).roomName(info.getRoomName())
+                .startTs(startTs).endTs(endTs).peerConnections(pcs)
+                .events(events).build();
     }
 
 

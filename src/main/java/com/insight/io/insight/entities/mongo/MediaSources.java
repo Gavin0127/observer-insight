@@ -10,7 +10,7 @@ import lombok.Data;
 public class MediaSources {
 
     private String peerConnectionUUID;
-    private String mediaSourceID;
+    private String mediaSourceId;
     private String trackId;
     private Long timestamp;
     private String mediaType;

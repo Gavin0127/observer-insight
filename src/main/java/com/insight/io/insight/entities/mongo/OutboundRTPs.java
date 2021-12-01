@@ -7,15 +7,16 @@ import lombok.Data;
  * @since 0.1
  */
 @Data
-public class OutBoundRTPs {
+public class OutboundRTPs {
 
     private Long ssrc;
     private String peerConnectionUUID;
     private String userId;
     private String callName;
-    private String trackId;
+    private String trackID;
     private String transportId;
     private String mediaType;
+    private String mediaSourceID;
     private Long timestamp;
     private String qualityLimitationReason;
     private Integer framesEncoded;

@@ -26,12 +26,14 @@ public class MeetingController {
     @Inject
     private MeetingService meetingService;
 
+    @Get("/all")
+    public List<Meeting> getAllMeetings() {
+        return meetingService.getMeetings(null, null);
+    }
+
     @Get
     public List<Meeting> getMeetings(@QueryValue @Nullable String roomName,
             @QueryValue @Nullable String uid) {
-        if (Objects.isNull(roomName) && Objects.isNull(uid)) {
-            return null;
-        }
         return meetingService.getMeetings(roomName, uid);
     }
 

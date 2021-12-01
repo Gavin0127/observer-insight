@@ -19,6 +19,7 @@ public class UserSession {
     private String uid;
     private Long startTs;
     private Long endTs;
+    private ClientInfo clientInfo;
     private List<PeerConnection> peerConnections;
     private List<Event> events;
 
