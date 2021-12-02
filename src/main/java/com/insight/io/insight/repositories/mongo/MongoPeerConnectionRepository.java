@@ -7,6 +7,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -24,10 +25,12 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
     public static final String PEER_UUID = "peerConnectionUUID";
     public static final String MEDIA_ID = "mediaSourceId";
     public static final String CALL_UUID = "callUUID";
+    public static final String ROOM_NAME = "roomName";
     public static final String SID = "sid";
     public static final String EXTENSION_TYPE = "extensionType";
     public static final String MID = "mid";
     public static final String PAYLOAD = "content";
+    public static final String SSRC = "ssrc";
 
     private String database;
 
@@ -163,6 +166,14 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
                 StreamSupport.stream(outBoundRTPs.spliterator(), false).collect(
                         Collectors.groupingBy(OutboundRTPs::getTrackID));
 
+        Ssrcs ssrcs = new Ssrcs();
+        JoinedPeerConnections peer =
+                getCollection(JoinedPeerConnections.class).find(
+                        Filters.eq(PEER_UUID, peerConnectionUUID)).first();
+        String roomName = "";
+        if (Objects.nonNull(peer)) {
+            roomName = peer.getCallName();
+        }
         List<PeerTrack> peerTracks = new ArrayList<>();
         tracksMap.entrySet().forEach(track -> {
             PeerTrack.PeerTrackBuilder trackBuilder = PeerTrack.builder();
@@ -199,6 +210,7 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
                     inboundMap.getOrDefault(trackId, new ArrayList<>());
             inbounds.forEach(stat -> {
                 trackBuilder.ssrc(stat.getSsrc());
+                ssrcs.setOutbound(stat.getSsrc());
                 inboundTrack.getFrameDecoded()
                         .put(stat.getTimestamp(), stat.getFramesDecoded());
                 inboundTrack.getKeyFrameDecoded()
@@ -223,6 +235,7 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
             outbounds.forEach(stat -> {
                 trackBuilder.ssrc(stat.getSsrc());
                 outboundTrack.setSsrc(stat.getSsrc());
+                ssrcs.setInbound(stat.getSsrc());
                 outboundTrack.getFrameEncoded()
                         .put(stat.getTimestamp(), stat.getFramesEncoded());
                 outboundTrack.getKeyFrameEncoded()
@@ -262,9 +275,28 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
             peerTracks.add(trackBuilder.build());
         });
 
-        return builder.peerTracks(peerTracks);
-    }
+        var remoteOut = getCollection(OutboundRTPs.class).find(
+                Filters.and(Filters.eq(SSRC, ssrcs.getInbound()),
+                        Filters.eq(ROOM_NAME, roomName))).first();
 
+        PeerConnection.RemotePeerInfo.RemotePeerInfoBuilder remotePeerInfoBuilder =
+                PeerConnection.RemotePeerInfo.builder();
+        if (Objects.nonNull(remoteOut)) {
+            remotePeerInfoBuilder.uid(remoteOut.getUserId())
+                    .peerConnectionUUID(remoteOut.getPeerConnectionUUID());
+        } else {
+            var remoteIn = getCollection(InboundRTPs.class).find(
+                    Filters.and(Filters.eq(SSRC, ssrcs.getInbound()),
+                            Filters.eq(ROOM_NAME, roomName))).first();
+            if (Objects.nonNull(remoteIn)) {
+                remotePeerInfoBuilder.uid(remoteIn.getUserId())
+                        .peerConnectionUUID(remoteIn.getPeerConnectionUUID());
+            }
+
+        }
+        return builder.peerTracks(peerTracks)
+                .remotePeerInfo(remotePeerInfoBuilder.build());
+    }
 
     private <T> MongoCollection<T> getCollection(Class<T> clazz) {
         MongoDatabase reports = mongoClient.getDatabase(this.database);
@@ -274,6 +306,12 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
     public MongoPeerConnectionRepository withDatabase(String database) {
         this.database = database;
         return this;
+    }
+
+    @Data
+    public static class Ssrcs {
+        private Long inbound;
+        private Long outbound;
     }
 
 }

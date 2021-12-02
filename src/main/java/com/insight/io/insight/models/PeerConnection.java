@@ -16,7 +16,16 @@ public class PeerConnection {
     private String sid;
     private Long startTs;
     private Long endTs;
+    private RemotePeerInfo remotePeerInfo;
     private List<PeerTrack> peerTracks;
+
+    @Data
+    @Builder
+    public static class RemotePeerInfo {
+        private String uid;
+        private String peerConnectionUUID;
+    }
+
 
 
 
