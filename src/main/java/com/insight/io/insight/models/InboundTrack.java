@@ -1,5 +1,7 @@
 package com.insight.io.insight.models;
 
+import com.insight.io.insight.utils.StatTransformUtils;
+import io.micronaut.core.util.CollectionUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -28,31 +30,12 @@ public class InboundTrack {
     private TreeMap<Long, Integer> framePerSecond = new TreeMap<>();
     private TreeMap<Long, Double> jitterBufferDelay = new TreeMap<>();
 
-    //    @Data
-    //    @Builder
-    //    public static class InboundSample {
-    //
-    //        private Long ts;
-    //        private Integer frameDecoded;
-    //        private Integer keyFrameDecoded;
-    //        private Integer packetsReceived;
-    //        private Integer packetsLost;
-    //        private Integer qpSum;
-    //        private Integer bytesReceived;
-    //        private Integer firCount;
-    //        private Integer jitter;
-    //        private Integer frameReceived;
-    //        private Integer frameDropped;
-    //        private Integer frameWidth;
-    //        private Integer frameHeight;
-    //        private Integer framePerSecond;
-    //        private Integer jitterBufferDelay;
-    //        private Integer width;
-    //        private Integer height;
-    //        private Integer audioLevel;
-    //        private Integer totalAudioEnergy;
-    //        private Integer totalSamplesDuration;
-    //
-    //    }
+    public void transform() {
+        StatTransformUtils.transformInt(packetsReceived);
+        StatTransformUtils.transformInt(bytesReceived);
+
+
+
+    }
 
 }

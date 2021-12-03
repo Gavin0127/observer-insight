@@ -1,5 +1,6 @@
 package com.insight.io.insight.models;
 
+import com.insight.io.insight.utils.StatTransformUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +14,6 @@ import java.util.TreeMap;
 @NoArgsConstructor
 public class OutboundTrack {
 
-    private Long ssrc;
     private TreeMap<Long, Integer> frameEncoded = new TreeMap<>();
     private TreeMap<Long, Integer> keyFrameEncoded = new TreeMap<>();
     private TreeMap<Long, Integer> retransmittedBytesSent = new TreeMap<>();
@@ -31,25 +31,13 @@ public class OutboundTrack {
     private TreeMap<Long, Double> audioLevel = new TreeMap<>();
     private TreeMap<Long, Double> totalAudioEnergy = new TreeMap<>();
     private TreeMap<Long, Double> totalSamplesDuration = new TreeMap<>();
-    //    private List<OutboundSample> outboundSamples;
 
-    //    @Data
-    //    @Builder
-    //    public static class OutboundSample {
-    //
-    //        private Long ts;
-    //        private Integer frameEncoded;
-    //        private Integer keyFrameEncoded;
-    //        private Integer retransmittedBytesSent;
-    //        private Integer totalEncodedBytesTarget;
-    //        private Integer qpSum;
-    //        private Integer firCount;
-    //        private Integer bytesSent;
-    //        private Integer frameWidth;
-    //        private Integer frameHeight;
-    //        private Integer hugeFramesSent;
-    //        private Integer framePerSecond;
-    //
-    //    }
+    public void transform() {
+        StatTransformUtils.transformInt(retransmittedBytesSent);
+        StatTransformUtils.transformInt(bytesSent);
+
+
+
+    }
 
 }

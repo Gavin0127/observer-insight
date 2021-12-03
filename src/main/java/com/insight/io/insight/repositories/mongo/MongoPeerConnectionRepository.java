@@ -210,7 +210,7 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
                     inboundMap.getOrDefault(trackId, new ArrayList<>());
             inbounds.forEach(stat -> {
                 trackBuilder.ssrc(stat.getSsrc());
-                ssrcs.setOutbound(stat.getSsrc());
+                ssrcs.setInbound(stat.getSsrc());
                 inboundTrack.getFrameDecoded()
                         .put(stat.getTimestamp(), stat.getFramesDecoded());
                 inboundTrack.getKeyFrameDecoded()
@@ -234,8 +234,7 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
             Set<String> mediaIds = new HashSet<>();
             outbounds.forEach(stat -> {
                 trackBuilder.ssrc(stat.getSsrc());
-                outboundTrack.setSsrc(stat.getSsrc());
-                ssrcs.setInbound(stat.getSsrc());
+                ssrcs.setOutbound(stat.getSsrc());
                 outboundTrack.getFrameEncoded()
                         .put(stat.getTimestamp(), stat.getFramesEncoded());
                 outboundTrack.getKeyFrameEncoded()
@@ -286,7 +285,7 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
                     .peerConnectionUUID(remoteOut.getPeerConnectionUUID());
         } else {
             var remoteIn = getCollection(InboundRTPs.class).find(
-                    Filters.and(Filters.eq(SSRC, ssrcs.getInbound()),
+                    Filters.and(Filters.eq(SSRC, ssrcs.getOutbound()),
                             Filters.eq(ROOM_NAME, roomName))).first();
             if (Objects.nonNull(remoteIn)) {
                 remotePeerInfoBuilder.uid(remoteIn.getUserId())
