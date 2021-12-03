@@ -269,8 +269,9 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
                     outboundTrack.getAudioLevel()
                             .put(stat.getTimestamp(), stat.getAudioLevel());
                 });
-
             });
+            outboundTrack.transform();
+            inboundTrack.transform();
             peerTracks.add(trackBuilder.build());
         });
 
