@@ -33,8 +33,8 @@ public class OutboundTrack {
     private TreeMap<Long, Double> totalSamplesDuration = new TreeMap<>();
 
     public void transform() {
-        StatTransformUtils.transformInt(retransmittedBytesSent);
-        StatTransformUtils.transformInt(bytesSent);
+        this.retransmittedBytesSent = StatTransformUtils.transformInt(retransmittedBytesSent);
+        this.bytesSent = StatTransformUtils.transformInt(bytesSent);
 
 
 

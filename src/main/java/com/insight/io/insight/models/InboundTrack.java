@@ -31,9 +31,8 @@ public class InboundTrack {
     private TreeMap<Long, Double> jitterBufferDelay = new TreeMap<>();
 
     public void transform() {
-        StatTransformUtils.transformInt(packetsReceived);
-        StatTransformUtils.transformInt(bytesReceived);
-
+        this.packetsReceived = StatTransformUtils.transformInt(packetsReceived);
+        this.bytesReceived = StatTransformUtils.transformInt(bytesReceived);
 
 
     }
