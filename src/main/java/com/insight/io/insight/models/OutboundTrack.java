@@ -35,8 +35,16 @@ public class OutboundTrack {
     public void transform() {
         this.retransmittedBytesSent = StatTransformUtils.transformInt(retransmittedBytesSent);
         this.bytesSent = StatTransformUtils.transformInt(bytesSent);
-
-
+        this.totalAudioEnergy =
+                StatTransformUtils.transformDouble(totalAudioEnergy);
+        this.totalSamplesDuration =
+                StatTransformUtils.transformDouble(totalSamplesDuration);
+        this.frameEncoded = StatTransformUtils.transformInt(frameEncoded);
+        this.keyFrameEncoded = StatTransformUtils.transformInt(keyFrameEncoded);
+        this.totalEncodedBytesTarget =
+                StatTransformUtils.transformInt(totalEncodedBytesTarget);
+        this.qpSum = StatTransformUtils.transformInt(qpSum);
+        this.firCount = StatTransformUtils.transformInt(firCount);
 
     }
 

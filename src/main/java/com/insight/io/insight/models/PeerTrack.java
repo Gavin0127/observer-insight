@@ -16,6 +16,7 @@ public class PeerTrack {
     private String mediaType;
     private InboundTrack inboundTrack;
     private OutboundTrack outboundTrack;
+    private RemoteInboundTrack remoteInboundTrack;
 
 
 }

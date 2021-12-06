@@ -165,6 +165,11 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
         var outboundMap =
                 StreamSupport.stream(outBoundRTPs.spliterator(), false).collect(
                         Collectors.groupingBy(OutboundRTPs::getTrackID));
+        var remoteInboundRTPs = getCollection(RemoteInboundRTPs.class).find(
+                Filters.eq(PEER_UUID, peerConnectionUUID));
+        var remoteInboundRTPsList =
+                StreamSupport.stream(remoteInboundRTPs.spliterator(), false)
+                        .toList();
 
         Ssrcs ssrcs = new Ssrcs();
         JoinedPeerConnections peer =
@@ -183,6 +188,8 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
             trackBuilder.inboundTrack(inboundTrack);
             OutboundTrack outboundTrack = new OutboundTrack();
             trackBuilder.outboundTrack(outboundTrack);
+            RemoteInboundTrack remoteInboundTrack = new RemoteInboundTrack();
+            trackBuilder.remoteInboundTrack(remoteInboundTrack);
             track.getValue().forEach(stat -> {
                 trackBuilder.mediaType(stat.getMediaType());
                 if (stat.getRemoteSource()) {
@@ -270,8 +277,17 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
                             .put(stat.getTimestamp(), stat.getAudioLevel());
                 });
             });
+            remoteInboundRTPsList.forEach(remote -> {
+                remoteInboundTrack.getRoundTripTime()
+                        .put(remote.getTimestamp(), remote.getRoundTripTime());
+                remoteInboundTrack.getJitter()
+                        .put(remote.getTimestamp(), remote.getJitter());
+                remoteInboundTrack.getPacketsLost()
+                        .put(remote.getTimestamp(), remote.getPacketsLost());
+            });
             outboundTrack.transform();
             inboundTrack.transform();
+            remoteInboundTrack.transform();
             peerTracks.add(trackBuilder.build());
         });
 
@@ -279,8 +295,8 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
                 Filters.and(Filters.eq(SSRC, ssrcs.getInbound()),
                         Filters.eq(ROOM_NAME, roomName))).first();
 
-        PeerConnection.RemotePeerInfo.RemotePeerInfoBuilder remotePeerInfoBuilder =
-                PeerConnection.RemotePeerInfo.builder();
+        PeerConnection.RemotePeerInfo.RemotePeerInfoBuilder
+                remotePeerInfoBuilder = PeerConnection.RemotePeerInfo.builder();
         if (Objects.nonNull(remoteOut)) {
             remotePeerInfoBuilder.uid(remoteOut.getUserId())
                     .peerConnectionUUID(remoteOut.getPeerConnectionUUID());

@@ -33,7 +33,12 @@ public class InboundTrack {
     public void transform() {
         this.packetsReceived = StatTransformUtils.transformInt(packetsReceived);
         this.bytesReceived = StatTransformUtils.transformInt(bytesReceived);
-
+        this.frameDecoded = StatTransformUtils.transformInt(frameDecoded);
+        this.keyFrameDecoded = StatTransformUtils.transformInt(keyFrameDecoded);
+        this.packetsLost = StatTransformUtils.transformInt(packetsLost);
+        this.qpSum = StatTransformUtils.transformInt(qpSum);
+        this.jitterBufferDelay =
+                StatTransformUtils.transformDouble(jitterBufferDelay);
 
     }
 

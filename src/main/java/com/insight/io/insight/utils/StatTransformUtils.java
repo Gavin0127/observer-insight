@@ -18,9 +18,9 @@ public class StatTransformUtils {
         TreeMap<Long, Integer> transformed = new TreeMap<>();
         var iter = stats.entrySet().iterator();
         var pre = iter.next();
+        transformed.put(pre.getKey(), pre.getValue());
         while (iter.hasNext()) {
             var preVal = pre.getValue();
-            transformed.put(pre.getKey(), preVal);
             var next = iter.next();
             transformed.put(next.getKey(), next.getValue() - preVal);
             pre = next;
@@ -35,9 +35,9 @@ public class StatTransformUtils {
         TreeMap<Long, Double> transformed = new TreeMap<>();
         var iter = stats.entrySet().iterator();
         var pre = iter.next();
+        transformed.put(pre.getKey(), pre.getValue());
         while (iter.hasNext()) {
             var preVal = pre.getValue();
-            transformed.put(pre.getKey(), preVal);
             var next = iter.next();
             transformed.put(next.getKey(), next.getValue() - preVal);
             pre = next;
