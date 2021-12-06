@@ -9,12 +9,10 @@ import lombok.Data;
 @Data
 public class RemoteInboundRTPs {
 
-    private String ssrc;
+    private Long ssrc;
     private String peerConnectionUUID;
-    private String userId;
     private String callName;
-    private String trackId;
-    private String transportId;
+    private String transportID;
     private String localID;
     private String mediaType;
     private Long timestamp;

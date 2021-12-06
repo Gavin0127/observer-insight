@@ -1,8 +1,9 @@
 package com.insight.io.insight.utils;
 
-import com.google.errorprone.annotations.Var;
 import io.micronaut.core.util.CollectionUtils;
 
+import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeMap;
 
 /**
@@ -11,7 +12,8 @@ import java.util.TreeMap;
  */
 public class StatTransformUtils {
 
-    public static TreeMap<Long, Integer> transformInt(TreeMap<Long, Integer> stats) {
+    public static TreeMap<Long, Integer> transformInt(
+            TreeMap<Long, Integer> stats) {
         if (CollectionUtils.isEmpty(stats)) {
             return stats;
         }
@@ -22,13 +24,19 @@ public class StatTransformUtils {
         while (iter.hasNext()) {
             var preVal = pre.getValue();
             var next = iter.next();
-            transformed.put(next.getKey(), next.getValue() - preVal);
+            Long nextKey = next.getKey();
+            Integer nextValue = next.getValue();
+            if (Objects.isNull(nextKey) || Objects.isNull(nextValue)) {
+                continue;
+            }
+            transformed.put(nextKey, nextValue - preVal);
             pre = next;
         }
         return transformed;
     }
 
-    public static TreeMap<Long, Double> transformDouble(TreeMap<Long, Double> stats) {
+    public static TreeMap<Long, Double> transformDouble(
+            TreeMap<Long, Double> stats) {
         if (CollectionUtils.isEmpty(stats)) {
             return stats;
         }
@@ -39,7 +47,12 @@ public class StatTransformUtils {
         while (iter.hasNext()) {
             var preVal = pre.getValue();
             var next = iter.next();
-            transformed.put(next.getKey(), next.getValue() - preVal);
+            Long nextKey = next.getKey();
+            Double nextValue = next.getValue();
+            if (Objects.isNull(nextKey) || Objects.isNull(nextValue)) {
+                continue;
+            }
+            transformed.put(nextKey, nextValue - preVal);
             pre = next;
         }
         return transformed;
