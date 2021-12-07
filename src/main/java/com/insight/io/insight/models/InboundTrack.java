@@ -1,7 +1,6 @@
 package com.insight.io.insight.models;
 
 import com.insight.io.insight.utils.StatTransformUtils;
-import io.micronaut.core.util.CollectionUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,8 +18,10 @@ public class InboundTrack {
     private TreeMap<Long, Integer> keyFrameDecoded = new TreeMap<>();
     private TreeMap<Long, Integer> packetsReceived = new TreeMap<>();
     private TreeMap<Long, Integer> packetsLost = new TreeMap<>();
+    private TreeMap<Long, Double> lostRatio = new TreeMap<>();
     private TreeMap<Long, Integer> qpSum = new TreeMap<>();
     private TreeMap<Long, Integer> bytesReceived = new TreeMap<>();
+    private TreeMap<Long, Integer> receivedBitRate = new TreeMap<>();
     private TreeMap<Long, Integer> firCount = new TreeMap<>();
     private TreeMap<Long, Double> jitter = new TreeMap<>();
     private TreeMap<Long, Integer> frameReceived = new TreeMap<>();
@@ -39,7 +40,10 @@ public class InboundTrack {
         this.qpSum = StatTransformUtils.transformInt(qpSum);
         this.jitterBufferDelay =
                 StatTransformUtils.transformDouble(jitterBufferDelay);
-
+        this.receivedBitRate =
+                StatTransformUtils.transformBitRate(bytesReceived);
+        this.lostRatio =
+                StatTransformUtils.transformRatio(packetsReceived, packetsLost);
     }
 
 }

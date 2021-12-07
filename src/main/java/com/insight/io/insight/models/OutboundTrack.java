@@ -21,6 +21,7 @@ public class OutboundTrack {
     private TreeMap<Long, Integer> qpSum = new TreeMap<>();
     private TreeMap<Long, Integer> firCount = new TreeMap<>();
     private TreeMap<Long, Integer> bytesSent = new TreeMap<>();
+    private TreeMap<Long, Integer> sendBitRate = new TreeMap<>();
     private TreeMap<Long, Integer> frameWidth = new TreeMap<>();
     private TreeMap<Long, Integer> frameHeight = new TreeMap<>();
     private TreeMap<Long, Integer> frameDropped = new TreeMap<>();
@@ -45,6 +46,7 @@ public class OutboundTrack {
                 StatTransformUtils.transformInt(totalEncodedBytesTarget);
         this.qpSum = StatTransformUtils.transformInt(qpSum);
         this.firCount = StatTransformUtils.transformInt(firCount);
+        this.sendBitRate = StatTransformUtils.transformBitRate(bytesSent);
 
     }
 

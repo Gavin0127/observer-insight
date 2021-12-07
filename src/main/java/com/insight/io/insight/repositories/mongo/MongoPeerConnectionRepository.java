@@ -291,6 +291,9 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
             peerTracks.add(trackBuilder.build());
         });
 
+        AggrTrack aggrTrack = new AggrTrack();
+        aggrTrack.aggr(peerTracks);
+
         var remoteOut = getCollection(OutboundRTPs.class).find(
                 Filters.and(Filters.eq(SSRC, ssrcs.getInbound()),
                         Filters.eq(ROOM_NAME, roomName))).first();
@@ -308,9 +311,8 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
                 remotePeerInfoBuilder.uid(remoteIn.getUserId())
                         .peerConnectionUUID(remoteIn.getPeerConnectionUUID());
             }
-
         }
-        return builder.peerTracks(peerTracks)
+        return builder.peerTracks(peerTracks).aggrTrack(aggrTrack)
                 .remotePeerInfo(remotePeerInfoBuilder.build());
     }
 

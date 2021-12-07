@@ -17,6 +17,7 @@ public class PeerConnection {
     private Long startTs;
     private Long endTs;
     private RemotePeerInfo remotePeerInfo;
+    private AggrTrack aggrTrack;
     private List<PeerTrack> peerTracks;
 
     @Data
