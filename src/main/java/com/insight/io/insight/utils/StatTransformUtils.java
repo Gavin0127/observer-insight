@@ -70,15 +70,15 @@ public class StatTransformUtils {
         transformed.put(preKey, preVal.intValue());
         while (iter.hasNext()) {
             preKey = pre.getKey();
-//            preVal = pre.getValue();
+            //            preVal = pre.getValue();
             var next = iter.next();
             var nextKey = next.getKey();
             var nextValue = next.getValue();
             if (Objects.isNull(nextKey) || Objects.isNull(nextValue)) {
                 continue;
             }
-            transformed.put(nextKey,
-                    Math.toIntExact(nextValue.intValue() / ((nextKey - preKey)/1000)));
+            transformed.put(nextKey, Math.toIntExact(
+                    nextValue.intValue() / ((nextKey - preKey) / 1000)));
             pre = next;
         }
         return transformed;
@@ -86,7 +86,8 @@ public class StatTransformUtils {
 
     public static <T extends Number> TreeMap<Long, Double> transformRatio(
             TreeMap<Long, T> statsDeno, TreeMap<Long, T> statElem) {
-        if (CollectionUtils.isEmpty(statsDeno) || CollectionUtils.isEmpty(statElem)) {
+        if (CollectionUtils.isEmpty(statsDeno) ||
+                CollectionUtils.isEmpty(statElem)) {
             return new TreeMap<>();
         }
         TreeMap<Long, Double> transformed = new TreeMap<>();
@@ -95,8 +96,10 @@ public class StatTransformUtils {
             T denoVal = entry.getValue();
             T elemVal = statElem.get(key);
             double ratio = 0D;
-            if (Objects.nonNull(denoVal) && denoVal.intValue() != 0 && Objects.nonNull(elemVal)) {
-                ratio = elemVal.doubleValue() / denoVal.doubleValue();
+            if (Objects.nonNull(denoVal) && denoVal.intValue() != 0 &&
+                    Objects.nonNull(elemVal)) {
+                ratio = elemVal.doubleValue() /
+                        (denoVal.doubleValue() + elemVal.doubleValue());
             }
             transformed.put(key, ratio);
         });

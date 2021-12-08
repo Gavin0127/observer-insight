@@ -21,7 +21,7 @@ public class InboundTrack {
     private TreeMap<Long, Double> lostRatio = new TreeMap<>();
     private TreeMap<Long, Integer> qpSum = new TreeMap<>();
     private TreeMap<Long, Integer> bytesReceived = new TreeMap<>();
-    private TreeMap<Long, Integer> receivedBitRate = new TreeMap<>();
+    private TreeMap<Long, Integer> receivedBitrate = new TreeMap<>();
     private TreeMap<Long, Integer> firCount = new TreeMap<>();
     private TreeMap<Long, Double> jitter = new TreeMap<>();
     private TreeMap<Long, Integer> frameReceived = new TreeMap<>();
@@ -40,7 +40,7 @@ public class InboundTrack {
         this.qpSum = StatTransformUtils.transformInt(qpSum);
         this.jitterBufferDelay =
                 StatTransformUtils.transformDouble(jitterBufferDelay);
-        this.receivedBitRate =
+        this.receivedBitrate =
                 StatTransformUtils.transformBitRate(bytesReceived);
         this.lostRatio =
                 StatTransformUtils.transformRatio(packetsReceived, packetsLost);

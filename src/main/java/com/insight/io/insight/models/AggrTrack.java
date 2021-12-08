@@ -15,8 +15,8 @@ import java.util.TreeMap;
 @NoArgsConstructor
 public class AggrTrack {
 
-    private TreeMap<Long, Double> totalSendBitRate = new TreeMap<>();
-    private TreeMap<Long, Double> totalReceiveBitRate = new TreeMap<>();
+    private TreeMap<Long, Double> totalSendBitrate = new TreeMap<>();
+    private TreeMap<Long, Double> totalReceiveBitrate = new TreeMap<>();
 
     public void transform() {
 
@@ -36,11 +36,11 @@ public class AggrTrack {
             if (Objects.isNull(outboundTrack)) {
                 return;
             }
-            outboundTrack.getSendBitRate().forEach((key, value) -> {
+            outboundTrack.getSendBitrate().forEach((key, value) -> {
                 sendBitRate.put(key, value + sendBitRate.getOrDefault(key, 0D));
             });
         });
-        this.totalSendBitRate = sendBitRate;
+        this.totalSendBitrate = sendBitRate;
     }
 
     private void aggrRecvBitRate(List<PeerTrack> peerTrackList) {
@@ -53,11 +53,11 @@ public class AggrTrack {
             if (Objects.isNull(inboundTrack)) {
                 return;
             }
-            inboundTrack.getReceivedBitRate().forEach((key, value) -> {
+            inboundTrack.getReceivedBitrate().forEach((key, value) -> {
                 receivedBitRate.put(key,
                         value + receivedBitRate.getOrDefault(key, 0D));
             });
         });
-        this.totalReceiveBitRate = receivedBitRate;
+        this.totalReceiveBitrate = receivedBitRate;
     }
 }
