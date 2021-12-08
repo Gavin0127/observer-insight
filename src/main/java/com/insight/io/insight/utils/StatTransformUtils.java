@@ -78,7 +78,7 @@ public class StatTransformUtils {
                 continue;
             }
             transformed.put(nextKey,
-                    Math.toIntExact(nextValue.intValue() / (nextKey - preKey)));
+                    Math.toIntExact(nextValue.intValue() / ((nextKey - preKey)/1000)));
             pre = next;
         }
         return transformed;
