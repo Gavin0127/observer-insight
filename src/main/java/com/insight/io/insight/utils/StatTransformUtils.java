@@ -23,6 +23,10 @@ public class StatTransformUtils {
         while (iter.hasNext()) {
             var preVal = pre.getValue();
             var next = iter.next();
+            if (Objects.isNull(preVal)) {
+                pre = next;
+                continue;
+            }
             Long nextKey = next.getKey();
             Integer nextValue = next.getValue();
             if (Objects.isNull(nextKey) || Objects.isNull(nextValue)) {
