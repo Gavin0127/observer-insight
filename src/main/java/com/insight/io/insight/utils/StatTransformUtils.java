@@ -81,8 +81,12 @@ public class StatTransformUtils {
             if (Objects.isNull(nextKey) || Objects.isNull(nextValue)) {
                 continue;
             }
+            long keyDelta = Math.round((nextKey - preKey) / 1000D);
+            if (keyDelta == 0) {
+                continue;
+            }
             transformed.put(nextKey, Math.toIntExact(
-                    nextValue.intValue() / Math.round(((nextKey - preKey) / 1000D))));
+                    nextValue.intValue() / keyDelta));
             pre = next;
         }
         return transformed;
