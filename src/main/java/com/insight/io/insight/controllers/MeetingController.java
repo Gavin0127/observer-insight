@@ -40,6 +40,7 @@ public class MeetingController {
     @Get("/{mid}")
     public Meeting getMeeting(
             @Parameter(description = "the meeting id") String mid) {
+        log.error("get meeting mid = " + mid);
         return meetingService.getMeeting(mid);
     }
 

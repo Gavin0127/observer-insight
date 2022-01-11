@@ -24,9 +24,10 @@ public class EventController {
     private EventService meetingService;
 
     @Post
-    public void getMeetings(@Body EventDto event) {
+    public void receiveEvents(@Body EventDto event) {
         if (Objects.nonNull(event)) {
             meetingService.upload(event);
+            log.info("receive events" + event.toString());
         }
     }
 
