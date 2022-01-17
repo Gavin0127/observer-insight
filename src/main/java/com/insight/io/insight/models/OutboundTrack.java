@@ -33,6 +33,7 @@ public class OutboundTrack {
     private TreeMap<Long, Double> audioLevel = new TreeMap<>();
     private TreeMap<Long, Double> totalAudioEnergy = new TreeMap<>();
     private TreeMap<Long, Double> totalSamplesDuration = new TreeMap<>();
+    private TreeMap<Long, String> qualityLimitationReason = new TreeMap<>();
 
     public void transform() {
         this.retransmittedBytesSent = StatTransformUtils.transformInt(retransmittedBytesSent);

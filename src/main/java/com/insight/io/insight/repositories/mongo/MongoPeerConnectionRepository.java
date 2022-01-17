@@ -260,6 +260,9 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
                         .put(stat.getTimestamp(), stat.getBytesSent());
                 outboundTrack.getTargetBitrate().put(stat.getTimestamp(),
                         stat.getTotalEncodedBytesTarget());
+                outboundTrack.getQualityLimitationReason()
+                        .put(stat.getTimestamp(),
+                                stat.getQualityLimitationReason());
                 mediaIds.add(stat.getMediaSourceID());
             });
             mediaIds.forEach(mediaId -> {
