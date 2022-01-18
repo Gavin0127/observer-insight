@@ -42,7 +42,7 @@ public class MeetingServiceImpl implements MeetingService {
     public Meeting getMeeting(String mid) {
         Meeting meeting = meetingRepository.getMeeting(mid);
         List<String> sids = eventRepository.getEventsByMidAndUri(mid,
-                        EventType.JOIN.getUri()).stream().map(Event::getSid)
+                        EventType.JOIN.getUri()).stream().map(Event::getSid).distinct()
                 .collect(Collectors.toList());
         List<UserSession> userSessions = new ArrayList<>();
         sids.forEach(sid -> {
