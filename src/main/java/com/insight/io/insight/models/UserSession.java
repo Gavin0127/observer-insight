@@ -21,6 +21,7 @@ public class UserSession {
     private Long endTs;
     private ClientInfo clientInfo;
     private List<PeerConnection> peerConnections;
+    private TotalAggrTrack totalAggrTrack;
     private List<Event> events;
 
     @Data

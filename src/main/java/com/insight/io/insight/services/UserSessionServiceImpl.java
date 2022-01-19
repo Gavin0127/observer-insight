@@ -1,9 +1,6 @@
 package com.insight.io.insight.services;
 
-import com.insight.io.insight.models.Event;
-import com.insight.io.insight.models.EventType;
-import com.insight.io.insight.models.PeerConnection;
-import com.insight.io.insight.models.UserSession;
+import com.insight.io.insight.models.*;
 import com.insight.io.insight.repositories.EventRepository;
 import com.insight.io.insight.repositories.PeerConnectionRepository;
 import io.micronaut.core.util.CollectionUtils;
@@ -34,9 +31,12 @@ public class UserSessionServiceImpl implements UserSessionService {
     public UserSession getUserSession(String sid, boolean stats) {
         List<PeerConnection> pcs;
         List<Event> events = new ArrayList<>();
+        TotalAggrTrack totalAggrTrack = new TotalAggrTrack();
         if (stats) {
             pcs = pcRepo.getPeerConnectionsBySid(sid);
             events = eventRepo.getEventBySid(sid);
+            totalAggrTrack.aggr(pcs.stream().map(PeerConnection::getAggrTrack)
+                    .collect(Collectors.toList()));
         } else {
             pcs = pcRepo.getPeerConnectionsBySidWithoutStats(sid);
         }
@@ -83,7 +83,7 @@ public class UserSessionServiceImpl implements UserSessionService {
         return UserSession.builder().clientInfo(info).sid(sid)
                 .uid(info.getUid()).roomName(info.getRoomName())
                 .startTs(startTs).endTs(endTs).peerConnections(pcs)
-                .events(events).build();
+                .events(events).totalAggrTrack(totalAggrTrack).build();
     }
 
 

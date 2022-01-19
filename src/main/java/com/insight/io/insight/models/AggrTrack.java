@@ -18,9 +18,6 @@ public class AggrTrack {
     private TreeMap<Long, Double> totalSendBitrate = new TreeMap<>();
     private TreeMap<Long, Double> totalReceiveBitrate = new TreeMap<>();
 
-    public void transform() {
-
-    }
     public void aggr(List<PeerTrack> peerTrackList) {
         aggrSendBitRate(peerTrackList);
         aggrRecvBitRate(peerTrackList);
