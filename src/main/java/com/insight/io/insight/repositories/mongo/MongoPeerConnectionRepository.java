@@ -24,11 +24,10 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
 
     public static final String PEER_UUID = "peerConnectionUUID";
     public static final String MEDIA_ID = "mediaSourceId";
-    public static final String CALL_UUID = "callUUID";
     public static final String ROOM_NAME = "roomName";
     public static final String SID = "sid";
     public static final String EXTENSION_TYPE = "extensionType";
-    public static final String MID = "mid";
+    public static final String UID = "uid";
     public static final String PAYLOAD = "content";
     public static final String SSRC = "ssrc";
 
@@ -305,20 +304,29 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
 
         PeerConnection.RemotePeerInfo.RemotePeerInfoBuilder
                 remotePeerInfoBuilder = PeerConnection.RemotePeerInfo.builder();
+        String remoteUid = "";
         if (Objects.nonNull(remoteOut)) {
-            remotePeerInfoBuilder.uid(remoteOut.getUserId())
+            remoteUid = remoteOut.getUserId();
+            remotePeerInfoBuilder.uid(remoteUid)
                     .peerConnectionUUID(remoteOut.getPeerConnectionUUID());
         } else {
             var remoteIn = getCollection(InboundRTPs.class).find(
                     Filters.and(Filters.eq(SSRC, ssrcs.getOutbound()),
                             Filters.eq(ROOM_NAME, roomName))).first();
             if (Objects.nonNull(remoteIn)) {
-                remotePeerInfoBuilder.uid(remoteIn.getUserId())
+                remoteUid = remoteIn.getUserId();
+                remotePeerInfoBuilder.uid(remoteUid)
                         .peerConnectionUUID(remoteIn.getPeerConnectionUUID());
             }
         }
         return builder.peerTracks(peerTracks).aggrTrack(aggrTrack)
-                .remotePeerInfo(remotePeerInfoBuilder.build());
+                .remotePeerInfo(remotePeerInfoBuilder.sid(getSid(remoteUid)).build());
+    }
+
+    private String getSid(String uid) {
+        var events = getCollection(Events.class).find(Filters.eq(UID, uid));
+        Events first = events.first();
+        return first.getSid();
     }
 
     private <T> MongoCollection<T> getCollection(Class<T> clazz) {

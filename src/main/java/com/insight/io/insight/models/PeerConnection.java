@@ -24,6 +24,7 @@ public class PeerConnection {
     @Builder
     public static class RemotePeerInfo {
         private String uid;
+        private String sid;
         private String peerConnectionUUID;
     }
 

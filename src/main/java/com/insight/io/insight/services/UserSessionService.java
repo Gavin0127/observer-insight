@@ -10,4 +10,6 @@ public interface UserSessionService {
 
     UserSession getUserSession(String sid, boolean stats);
 
+    UserSession getUserSession(String sid, boolean stats,
+            boolean includeRemote);
 }

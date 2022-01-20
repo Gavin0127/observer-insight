@@ -29,14 +29,29 @@ public class UserSessionServiceImpl implements UserSessionService {
 
     @Override
     public UserSession getUserSession(String sid, boolean stats) {
+        return getUserSession(sid, stats, true);
+    }
+
+    @Override
+    public UserSession getUserSession(String sid, boolean stats,
+            boolean includeRemote) {
         List<PeerConnection> pcs;
         List<Event> events = new ArrayList<>();
+        List<UserSession> remoteUserSessions = new ArrayList<>();
         TotalAggrTrack totalAggrTrack = new TotalAggrTrack();
         if (stats) {
             pcs = pcRepo.getPeerConnectionsBySid(sid);
             events = eventRepo.getEventBySid(sid);
             totalAggrTrack.aggr(pcs.stream().map(PeerConnection::getAggrTrack)
                     .collect(Collectors.toList()));
+            if (includeRemote) {
+                remoteUserSessions =
+                        pcs.stream().map(PeerConnection::getRemotePeerInfo)
+                                .map(PeerConnection.RemotePeerInfo::getSid)
+                                .map(remoteSid -> getUserSession(remoteSid,
+                                        true, false))
+                                .collect(Collectors.toList());
+            }
         } else {
             pcs = pcRepo.getPeerConnectionsBySidWithoutStats(sid);
         }
@@ -83,7 +98,8 @@ public class UserSessionServiceImpl implements UserSessionService {
         return UserSession.builder().clientInfo(info).sid(sid)
                 .uid(info.getUid()).roomName(info.getRoomName())
                 .startTs(startTs).endTs(endTs).peerConnections(pcs)
-                .events(events).totalAggrTrack(totalAggrTrack).build();
+                .remoteUserSessions(remoteUserSessions).events(events)
+                .totalAggrTrack(totalAggrTrack).build();
     }
 
 
