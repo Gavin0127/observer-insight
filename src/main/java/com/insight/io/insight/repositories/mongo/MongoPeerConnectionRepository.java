@@ -319,13 +319,17 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
                         .peerConnectionUUID(remoteIn.getPeerConnectionUUID());
             }
         }
+        String remoteSid = getSid(remoteUid);
         return builder.peerTracks(peerTracks).aggrTrack(aggrTrack)
-                .remotePeerInfo(remotePeerInfoBuilder.sid(getSid(remoteUid)).build());
+                .remotePeerInfo(remotePeerInfoBuilder.sid(remoteSid).build());
     }
 
     private String getSid(String uid) {
         var events = getCollection(Events.class).find(Filters.eq(UID, uid));
         Events first = events.first();
+        if (first == null) {
+            return "";
+        }
         return first.getSid();
     }
 
