@@ -18,8 +18,8 @@ public class Tracks {
     private String mediaType;
     private Integer frameWidth;
     private Integer frameHeight;
-    private Integer frameReceived;
-    private Integer frameDropped;
+    private Integer framesReceived;
+    private Integer framesDropped;
     private Integer hugeFramesSent;
     private Double jitterBufferDelay;
     private Boolean remoteSource;

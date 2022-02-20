@@ -193,9 +193,9 @@ public class MongoPeerConnectionRepository implements PeerConnectionRepository {
                 trackBuilder.mediaType(stat.getMediaType());
                 if (stat.getRemoteSource()) {
                     inboundTrack.getFrameReceived()
-                            .put(stat.getTimestamp(), stat.getFrameReceived());
+                            .put(stat.getTimestamp(), stat.getFramesReceived());
                     inboundTrack.getFrameDropped()
-                            .put(stat.getTimestamp(), stat.getFrameDropped());
+                            .put(stat.getTimestamp(), stat.getFramesDropped());
                     inboundTrack.getFrameWidth()
                             .put(stat.getTimestamp(), stat.getFrameWidth());
                     inboundTrack.getFrameHeight()

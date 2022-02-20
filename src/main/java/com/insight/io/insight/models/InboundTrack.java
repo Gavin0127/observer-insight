@@ -35,6 +35,8 @@ public class InboundTrack {
         this.packetsReceived = StatTransformUtils.transformInt(packetsReceived);
         this.bytesReceived = StatTransformUtils.transformInt(bytesReceived);
         this.frameDecoded = StatTransformUtils.transformInt(frameDecoded);
+        this.frameReceived = StatTransformUtils.transformInt(frameReceived);
+        this.frameDropped = StatTransformUtils.transformInt(frameDropped);
         this.keyFrameDecoded = StatTransformUtils.transformInt(keyFrameDecoded);
         this.packetsLost = StatTransformUtils.transformInt(packetsLost);
         this.qpSum = StatTransformUtils.transformInt(qpSum);
